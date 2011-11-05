@@ -1234,7 +1234,7 @@ static void __init liberty_map_io(void)
 #endif
 }
 
-MACHINE_START(LIBERTY, "liberty")
+MACHINE_START(PHOTON, "photon")
 #ifdef CONFIG_MSM_DEBUG_UART
 	.phys_io        = MSM_DEBUG_UART_PHYS,
 	.io_pg_offst    = ((MSM_DEBUG_UART_BASE) >> 18) & 0xfffc,

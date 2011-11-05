@@ -411,6 +411,13 @@ config MACH_LIBERTY
 	help
 	  Support for Liberty (PDA phone).
 
+config MACH_PHOTON
+	depends on ARCH_MSM7227
+	default n
+	bool "Photon"
+	help
+	  Support for Photon (PDA phone).
+	  
 config MACH_MARVEL
 	depends on ARCH_MSM7227
 	default n
