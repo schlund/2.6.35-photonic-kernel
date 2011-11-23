@@ -160,11 +160,6 @@ static struct microp_function_config microp_functions[] = {
 		.category = MICROP_FUNCTION_RESET_INT,
 		.int_pin = 1 << 8,
 	},
-	{
-		.name   = "oj",
-		.category = MICROP_FUNCTION_OJ,
-		.int_pin = 1 << 12,
-	},
 };
 
 static struct microp_function_config microp_lightsensor = {

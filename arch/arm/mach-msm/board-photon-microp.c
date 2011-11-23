@@ -57,17 +57,6 @@ static int photon_microp_function_init(struct i2c_client *client)
 	if (ret)
 		goto exit;
 
-	/* OJ interrupt */
-	ret = microp_function_check(client, MICROP_FUNCTION_OJ);
-	if (ret >= 0) {
-		i = ret;
-		cdata->int_pin.int_oj = pdata->microp_function[i].int_pin;
-
-		ret = microp_write_interrupt(client, cdata->int_pin.int_oj, 1);
-		if (ret)
-			goto exit;
-	}
-
 	return 0;
 
 exit:
