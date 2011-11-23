@@ -75,7 +75,6 @@ static void photon_matrix_inputs_gpio(void)
 
 static struct gpio_event_matrix_info photon_keypad_matrix_info = {
 	.info.func = gpio_event_matrix_func,
-	.info.oj_btn = true,
 	.keymap = photon_keymap,
 	.output_gpios = photon_col_gpios,
 	.input_gpios = photon_row_gpios,
