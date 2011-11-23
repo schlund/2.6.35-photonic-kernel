@@ -23,13 +23,10 @@
 #include <linux/leds.h>
 #include <linux/switch.h>
 #include <linux/synaptics_i2c_rmi.h>
-#include <linux/atmel_qt602240.h>
-#include <linux/akm8973.h>
 #include <linux/bma150.h>
 #include <linux/capella_cm3602.h>
 #include <linux/sysdev.h>
 #include <linux/android_pmem.h>
-#include <linux/curcial_oj.h>
 #include <linux/mmc/sdio_ids.h>
 #include <linux/gpio_event.h>
 #include <linux/mtd/nand.h>
@@ -247,26 +244,7 @@ static struct microp_i2c_platform_data microp_data = {
 	.num_devices = ARRAY_SIZE(microp_devices),
 	.microp_devices = microp_devices,
 	.gpio_reset = PHOTON_GPIO_UP_RESET_N,
-	.spi_devices = SPI_OJ | SPI_GSENSOR,
-};
-
-static struct synaptics_i2c_rmi_platform_data photon_ts_t1007_data[] = {
-	{
-		.version = 0x0100,
-		.flags = SYNAPTICS_FLIP_Y | SYNAPTICS_SNAP_TO_INACTIVE_EDGE,
-		.inactive_left = -10 * 0x10000 / 3214,
-		.inactive_right = -10 * 0x10000 / 3214,
-		.inactive_top = -20 * 0x10000 / 5414,
-		.inactive_bottom = -20 * 0x10000 / 5414,
-		.snap_left_on = 10 * 0x10000 / 3214,
-		.snap_left_off = 20 * 0x10000 / 3214,
-		.snap_right_on = 10 * 0x10000 / 3214,
-		.snap_right_off = 20 * 0x10000 / 3214,
-		.snap_top_on = 20 * 0x10000 / 5414,
-		.snap_top_off = 30 * 0x10000 / 5414,
-		.snap_bottom_on = 20 * 0x10000 / 5414,
-		.snap_bottom_off = 30 * 0x10000 / 5414,
-	}
+	.spi_devices = SPI_GSENSOR,
 };
 
 static struct synaptics_i2c_rmi_platform_data photon_ts_t1021_data[] = {
@@ -275,105 +253,7 @@ static struct synaptics_i2c_rmi_platform_data photon_ts_t1021_data[] = {
 		.inactive_left = -1 * 0x10000 / 320,
 		.inactive_right = -1 * 0x10000 / 320,
 		.inactive_top = -1 * 0x10000 / 480,
-		.inactive_bottom = -50 * 0x10000 / 480,
-	}
-};
-
-static int photon_ts_atmel_power(int on)
-{
-	printk(KERN_INFO "%s():\n", __func__);
-	if (on) {
-		gpio_set_value(PHOTON_TP_5V_EN, 1);
-		msleep(2);
-		gpio_set_value(PHOTON_GPIO_TP_RST, 1);
-	} else {
-		gpio_set_value(PHOTON_TP_5V_EN, 0);
-		msleep(2);
-	}
-	return 0;
-}
-
-struct atmel_i2c_platform_data photon_ts_atmel_data[] = {
-	{
-		.version = 0x016,
-		.abs_x_min = 0,
-		.abs_x_max = 1023,
-		.abs_y_min = 0,
-		.abs_y_max = 915,
-		.abs_pressure_min = 0,
-		.abs_pressure_max = 255,
-		.abs_width_min = 0,
-		.abs_width_max = 20,
-		.gpio_irq = PHOTON_GPIO_TP_ATT_N,
-		.power = photon_ts_atmel_power,
-		.config_T6 = {0, 0, 0, 0, 0, 0},
-		.config_T7 = {50, 15, 25},
-		.config_T8 = {7, 0, 10, 10, 0, 0, 10, 15},
-		.config_T9 = {139, 0, 0, 16, 10, 0, 16, 40, 3, 1, 10, 10, 5, 15, 3, 10, 20, 0, 0, 0, 0, 0, 254, 2, 42, 36, 154, 54, 142, 89, 40},
-		.config_T15 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		.config_T19 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		.config_T20 = {7, 0, 0, 0, 0, 0, 0, 35, 20, 4, 15, 0},
-		.config_T22 = {15, 0, 0, 0, 0, 0, 0, 0, 16, 0, 1, 0, 7, 18, 255, 255, 0},
-		.config_T23 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		.config_T24 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		.config_T25 = {3, 0, 200, 50, 64, 31, 0, 0, 0, 0, 0, 0, 0, 0},
-		.config_T27 = {0, 0, 0, 0, 0, 0, 0},
-		.config_T28 = {0, 0, 0, 4, 8, 60},
-		.object_crc = {0xDC, 0x1F, 0x50},
-		.cable_config = {30, 30, 8, 16},
-	},
-	{
-		.version = 0x0015,
-		.abs_x_min = 0,
-		.abs_x_max = 1023,
-		.abs_y_min = 0,
-		.abs_y_max = 915,
-		.abs_pressure_min = 0,
-		.abs_pressure_max = 255,
-		.abs_width_min = 0,
-		.abs_width_max = 20,
-		.gpio_irq = PHOTON_GPIO_TP_ATT_N,
-		.power = photon_ts_atmel_power,
-		.config_T6 = {0, 0, 0, 0, 0, 0},
-		.config_T7 = {50, 15, 25},
-		.config_T8 = {8, 0, 20, 10, 0, 0, 5, 25},
-		.config_T9 = {139, 0, 0, 16, 10, 0, 16, 35, 2, 1, 0, 5, 2, 14, 2, 10, 20, 0, 0, 0, 0, 0, 1, 1, 20, 20, 153, 54, 153, 89},
-		.config_T15 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		.config_T19 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		.config_T20 = {19, 0, 0, 5, 5, 0, 0, 35, 20, 4, 15, 0},
-		.config_T22 = {13, 0, 0, 25, 0, -25, 255, 4, 20, 0, 1, 10, 15, 20, 25, 30, 4},
-		.config_T23 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		.config_T24 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		.config_T25 = {3, 0, 200, 50, 64, 31, 0, 0, 0, 0, 0, 0, 0, 0},
-		.config_T27 = {0, 0, 0, 0, 0, 0, 0},
-		.config_T28 = {0, 0, 0, 4, 8, 60},
-		.object_crc = {0x62, 0xAE, 0x09},
-	},
-	{
-		.version = 0x0014,
-		.abs_x_min = 13,
-		.abs_x_max = 1009,
-		.abs_y_min = 10,
-		.abs_y_max = 930,
-		.abs_pressure_min = 0,
-		.abs_pressure_max = 255,
-		.abs_width_min = 0,
-		.abs_width_max = 20,
-		.gpio_irq = PHOTON_GPIO_TP_ATT_N,
-		.power = photon_ts_atmel_power,
-		.config_T6 = {0, 0, 0, 0, 0, 0},
-		.config_T7 = {32, 16, 50},
-		.config_T8 = {8, 0, 20, 20, 0, 0, 10, 15},
-		.config_T9 = {131, 0, 0, 16, 10, 0, 48, 35, 2, 1, 0, 1, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		.config_T15 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		.config_T19 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		.config_T20 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		.config_T22 = {5, 0, 0, 25, 0, -25, 255, 4, 50, 0, 1, 10, 15, 20, 10, 10, 0},
-		.config_T23 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		.config_T24 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		.config_T25 = {3, 0, 224, 46, 88, 27, 0, 0, 0, 0, 0, 0, 0, 0},
-		.config_T27 = {0, 0, 0, 0, 0, 0, 0},
-		.config_T28 = {0, 0, 0, 4, 8},
+		.inactive_bottom = -72 * 0x10000 / 480,
 	}
 };
 
@@ -446,38 +326,17 @@ static struct platform_device android_usb_device = {
 	},
 };
 #endif
-static struct akm8973_platform_data compass_platform_data = {
-	.layouts = PHOTON_LAYOUTS,
-	.project_name = PHOTON_PROJECT_NAME,
-	.reset = PHOTON_GPIO_COMPASS_RST_N,
-	.intr = PHOTON_GPIO_COMPASS_INT_N,
-};
 
 static struct i2c_board_info i2c_devices[] = {
-	{
-		I2C_BOARD_INFO(SYNAPTICS_T1007_NAME, 0x20),
-		.platform_data = &photon_ts_t1007_data,
-		.irq = PHOTON_GPIO_TO_INT(PHOTON_GPIO_TP_ATT_N)
-	},
 	{
 		I2C_BOARD_INFO(SYNAPTICS_T1021_NAME, 0x21),
 		.platform_data = &photon_ts_t1021_data,
 		.irq = PHOTON_GPIO_TO_INT(PHOTON_GPIO_TP_ATT_N)
 	},
 	{
-		I2C_BOARD_INFO(ATMEL_QT602240_NAME, 0x94 >> 1),
-		.platform_data = &photon_ts_atmel_data,
-		.irq = MSM_GPIO_TO_INT(PHOTON_GPIO_TP_ATT_N)
-	},
-	{
 		I2C_BOARD_INFO(MICROP_I2C_NAME, 0xCC >> 1),
 		.platform_data = &microp_data,
 		.irq = PHOTON_GPIO_TO_INT(PHOTON_GPIO_UP_INT_N)
-	},
-	{
-		I2C_BOARD_INFO(AKM8973_I2C_NAME, 0x1C),
-		.platform_data = &compass_platform_data,
-		.irq = PHOTON_GPIO_TO_INT(PHOTON_GPIO_COMPASS_INT_N),
 	},
 };
 
@@ -698,90 +557,7 @@ static struct platform_device capella_cm3602 = {
 };
 /* End Proximity Sensor (Capella_CM3602)*/
 
-static void curcial_oj_shutdown (int	enable)
-{
-	uint8_t cmd[3];
-	memset(cmd, 0, sizeof(uint8_t)*3);
-
-	cmd[2] = 0x80;
-	if (enable)
-		microp_i2c_write(0x91, cmd, 3);
-	else
-		microp_i2c_write(0x90, cmd, 3);
-}
-static int curcial_oj_poweron(int on)
-{
-	struct vreg	*oj_power = vreg_get(0, "rftx");
-	if (IS_ERR(oj_power)) {
-		printk(KERN_ERR"%s:Error power domain\n",__func__);
-		return 0;
-	}
-
-	if (on) {
-		vreg_set_level(oj_power, 2850);
-		vreg_enable(oj_power);
-		printk(KERN_ERR "%s:OJ	power	enable(%d)\n", __func__, on);
-	} else {
-		vreg_disable(oj_power);
-		printk(KERN_ERR "%s:OJ	power	enable(%d)\n", __func__, on);
-		}
-	return 1;
-}
 #define LIB_MICROP_VER	0x02
-static void curcial_oj_adjust_xy(uint8_t *data, int16_t *mSumDeltaX, int16_t *mSumDeltaY)
-{
-	int8_t 	deltaX;
-	int8_t 	deltaY;
-
-
-	if (data[2] == 0x80)
-		data[2] = 0x81;
-	if (data[1] == 0x80)
-		data[1] = 0x81;
-	if (0) {
-		deltaX = (1)*((int8_t) data[2]); /*X=2*/
-		deltaY = (1)*((int8_t) data[1]); /*Y=1*/
-	} else {
-		deltaX = (1)*((int8_t) data[1]);
-		deltaY = (1)*((int8_t) data[2]);
-	}
-	*mSumDeltaX += -((int16_t)deltaX);
-	*mSumDeltaY += -((int16_t)deltaY);
-}
-static struct curcial_oj_platform_data photon_oj_data = {
-	.oj_poweron = curcial_oj_poweron,
-	.oj_shutdown = curcial_oj_shutdown,
-	.oj_adjust_xy = curcial_oj_adjust_xy,
-	.microp_version = LIB_MICROP_VER,
-	.mdelay_time = 0,
-	.normal_th = 8,
-	.xy_ratio = 15,
-	.interval = 20,
-	.swap = true,
-	.x = 1,
-	.y = 1,
-	.share_power = false,
-	.debugflag = 0,
-	.ap_code = true,
-	.sht_tbl = {0, 2000, 2250, 2500, 2750, 3000},
-	.pxsum_tbl = {0, 0, 40, 50, 60, 70},
-	.degree = 6,
-	.Xsteps = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		10, 10, 10, 10, 10, 9, 9, 9, 9, 9,
-		9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-	.Ysteps = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-		10, 10, 10, 10, 10, 9, 9, 9, 9, 9,
-		9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
-	.irq = MSM_uP_TO_INT(12),
-};
-
-static struct platform_device photon_oj = {
-	.name = CURCIAL_OJ_NAME,
-	.id = -1,
-	.dev = {
-		.platform_data	= &photon_oj_data,
-	}
-};
 
 static struct msm_i2c_device_platform_data msm_i2c_pdata = {
 	.i2c_clock = 400000,
@@ -884,7 +660,6 @@ static struct platform_device *devices[] __initdata = {
 #ifdef CONFIG_HTC_PWRSINK
 	&photon_pwr_sink,
 #endif
-	&photon_oj,
 	&capella_cm3602,
 	&photon_timed_gpios,
 };
@@ -1063,24 +838,14 @@ static struct perflock_platform_data photon_perflock_data = {
 static ssize_t photon_virtual_keys_show(struct kobject *kobj,
 			       struct kobj_attribute *attr, char *buf)
 {
-	if (system_rev > 1) {
 			/* center: x: home: 25, menu: 85, back: 235, search 295, y: 510 */
 		return sprintf(buf,
-			__stringify(EV_KEY) ":" __stringify(KEY_HOME)	    ":25:510:50:55"
-			":" __stringify(EV_KEY) ":" __stringify(KEY_MENU)   ":85:510:50:55"
-			":" __stringify(EV_KEY) ":" __stringify(KEY_BACK)   ":235:510:50:55"
-			":" __stringify(EV_KEY) ":" __stringify(KEY_SEARCH) ":295:510:50:55"
+			__stringify(EV_KEY) ":" __stringify(KEY_PHONE)       ":32:550:64:55"
+			":" __stringify(EV_KEY) ":" __stringify(KEY_HOME)    ":96:550:64:55"
+			":" __stringify(EV_KEY) ":" __stringify(KEY_MENU)    ":160:550:64:55"
+			":" __stringify(EV_KEY) ":" __stringify(KEY_BACK)    ":224:550:64:55"
+			":" __stringify(EV_KEY) ":" __stringify(KEY_SEARCH)     ":288:550:64:55"
 			"\n");
-	} else {
-
-		/* center: x: home: 30, menu: 110, back: 205, search 285, y: 510 */
-		return sprintf(buf,
-			__stringify(EV_KEY) ":" __stringify(KEY_HOME)  ":30:510:60:55"
-			":" __stringify(EV_KEY) ":" __stringify(KEY_MENU)   ":110:510:100:55"
-			":" __stringify(EV_KEY) ":" __stringify(KEY_BACK)   ":205:510:90:55"
-			":" __stringify(EV_KEY) ":" __stringify(KEY_SEARCH) ":285:510:70:55"
-			"\n");
-	}
 }
 
 static struct kobj_attribute photon_synaptics_virtual_keys_attr = {
@@ -1091,17 +856,8 @@ static struct kobj_attribute photon_synaptics_virtual_keys_attr = {
 	.show = &photon_virtual_keys_show,
 };
 
-static struct kobj_attribute photon_atmel_virtual_keys_attr = {
-	.attr = {
-		.name = "virtualkeys.atmel-touchscreen",
-		.mode = S_IRUGO,
-	},
-	.show = &photon_virtual_keys_show,
-};
-
 static struct attribute *photon_properties_attrs[] = {
 	&photon_synaptics_virtual_keys_attr.attr,
-	&photon_atmel_virtual_keys_attr.attr,
 	NULL
 };
 
@@ -1239,7 +995,7 @@ MACHINE_START(PHOTON, "photon")
 	.phys_io        = MSM_DEBUG_UART_PHYS,
 	.io_pg_offst    = ((MSM_DEBUG_UART_BASE) >> 18) & 0xfffc,
 #endif
-	.boot_params    = 0x12C00100,
+	.boot_params    = 0x00200100,
 	.fixup          = photon_fixup,
 	.map_io         = photon_map_io,
 	.init_irq       = photon_init_irq,

@@ -55,7 +55,6 @@
 #define PHOTON_GPIO_WIFI_IRQ1           (29)
 #define PHOTON_GPIO_USB_ISET            (30)
 #define PHOTON_GPIO_RESET_BTN_N         (36)
-#define PHOTON_GPIO_COMPASS_INT_N       (37)
 #define PHOTON_GPIO_SDMC_CD_N           (38)
 #define PHOTON_GPIO_UP_INT_N            (39)
 #define PHOTON_GPIO_CAM_I2C_SCL         (49)
@@ -91,7 +90,6 @@
 #define PHOTON_GPIO_UART3_TX            (87)
 #define PHOTON_GPIO_VIB_3V_EN           (92)
 #define PHOTON_GPIO_LS_EN               (93)
-#define PHOTON_GPIO_COMPASS_RST_N       (107)
 #define PHOTON_GPIO_WIFI_EN             (108)
 #define PHOTON_GPIO_USBPHY_3V3_EN       (109)
 
@@ -126,11 +124,8 @@
 #define PHOTON_GPIO_BT_SHUTDOWN_N       (123)
 
 /* Touch Panel */
-#define PHOTON_TP_5V_EN                 (31)
-#define PHOTON_TP_LS_EN                 (91)
 #define PHOTON_GPIO_TP_ATT_N            (94)
 #define PHOTON_LCD_RSTz		 (118)
-#define PHOTON_GPIO_TP_RST              (120)
 
 /* 35mm headset */
 #define PHOTON_GPIO_35MM_HEADSET_DET    (83)
