@@ -831,7 +831,7 @@ static int s5k4e1gx_probe_init_sensor(const struct msm_camera_sensor_info *data)
 		s5k4e1gx_reg_cand[1].data_pclk_strength = 0xFA;
 	}
 
-	if (machine_is_liberty()) {
+	if (machine_is_liberty() || machine_is_photon()) {
 		s5k4e1gx_reg_pat[S_RES_PREVIEW].v_h_strength = 0x0F; /* 0x0A; */
 		s5k4e1gx_reg_pat[S_RES_CAPTURE].v_h_strength = 0x0F; /* 0x0A; */
 		s5k4e1gx_reg_pat[S_RES_PREVIEW].data_pclk_strength = 0xFA; /* 0xEA; */
