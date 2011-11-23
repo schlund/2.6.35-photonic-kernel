@@ -84,18 +84,18 @@
 
 void msm_init_irq(void);
 void msm_init_gpio(void);
-void config_liberty_camera_on_gpios(void);
-void config_liberty_camera_off_gpios(void);
+void config_photon_camera_on_gpios(void);
+void config_photon_camera_off_gpios(void);
 
-void config_liberty_proximity_gpios(int on);
+void config_photon_proximity_gpios(int on);
 
 #ifdef CONFIG_MICROP_COMMON
-void __init liberty_microp_init(void);
+void __init photon_microp_init(void);
 #endif
 
 /* HTC_HEADSET_GPIO Driver */
 static struct htc_headset_gpio_platform_data htc_headset_gpio_data = {
-	.hpin_gpio		= LIBERTY_GPIO_35MM_HEADSET_DET,
+	.hpin_gpio		= PHOTON_GPIO_35MM_HEADSET_DET,
 	.key_enable_gpio	= 0,
 	.mic_select_gpio	= 0,
 };
@@ -207,7 +207,7 @@ static struct microp_led_platform_data microp_leds_data = {
 };
 
 
-static struct bma150_platform_data liberty_g_sensor_pdata = {
+static struct bma150_platform_data photon_g_sensor_pdata = {
 	.microp_new_cmd = 1,
 	.chip_layout = 1,
 };
@@ -229,7 +229,7 @@ static struct platform_device microp_devices[] = {
 	{
 		.name = BMA150_G_SENSOR_NAME,
 		.dev = {
-			.platform_data = &liberty_g_sensor_pdata,
+			.platform_data = &photon_g_sensor_pdata,
 		},
 	},
 	{
@@ -246,11 +246,11 @@ static struct microp_i2c_platform_data microp_data = {
 	.microp_function = microp_functions,
 	.num_devices = ARRAY_SIZE(microp_devices),
 	.microp_devices = microp_devices,
-	.gpio_reset = LIBERTY_GPIO_UP_RESET_N,
+	.gpio_reset = PHOTON_GPIO_UP_RESET_N,
 	.spi_devices = SPI_OJ | SPI_GSENSOR,
 };
 
-static struct synaptics_i2c_rmi_platform_data liberty_ts_t1007_data[] = {
+static struct synaptics_i2c_rmi_platform_data photon_ts_t1007_data[] = {
 	{
 		.version = 0x0100,
 		.flags = SYNAPTICS_FLIP_Y | SYNAPTICS_SNAP_TO_INACTIVE_EDGE,
@@ -269,7 +269,7 @@ static struct synaptics_i2c_rmi_platform_data liberty_ts_t1007_data[] = {
 	}
 };
 
-static struct synaptics_i2c_rmi_platform_data liberty_ts_t1021_data[] = {
+static struct synaptics_i2c_rmi_platform_data photon_ts_t1021_data[] = {
 	{
 		.version = 0x0100,
 		.inactive_left = -1 * 0x10000 / 320,
@@ -279,21 +279,21 @@ static struct synaptics_i2c_rmi_platform_data liberty_ts_t1021_data[] = {
 	}
 };
 
-static int liberty_ts_atmel_power(int on)
+static int photon_ts_atmel_power(int on)
 {
 	printk(KERN_INFO "%s():\n", __func__);
 	if (on) {
-		gpio_set_value(LIBERTY_TP_5V_EN, 1);
+		gpio_set_value(PHOTON_TP_5V_EN, 1);
 		msleep(2);
-		gpio_set_value(LIBERTY_GPIO_TP_RST, 1);
+		gpio_set_value(PHOTON_GPIO_TP_RST, 1);
 	} else {
-		gpio_set_value(LIBERTY_TP_5V_EN, 0);
+		gpio_set_value(PHOTON_TP_5V_EN, 0);
 		msleep(2);
 	}
 	return 0;
 }
 
-struct atmel_i2c_platform_data liberty_ts_atmel_data[] = {
+struct atmel_i2c_platform_data photon_ts_atmel_data[] = {
 	{
 		.version = 0x016,
 		.abs_x_min = 0,
@@ -304,8 +304,8 @@ struct atmel_i2c_platform_data liberty_ts_atmel_data[] = {
 		.abs_pressure_max = 255,
 		.abs_width_min = 0,
 		.abs_width_max = 20,
-		.gpio_irq = LIBERTY_GPIO_TP_ATT_N,
-		.power = liberty_ts_atmel_power,
+		.gpio_irq = PHOTON_GPIO_TP_ATT_N,
+		.power = photon_ts_atmel_power,
 		.config_T6 = {0, 0, 0, 0, 0, 0},
 		.config_T7 = {50, 15, 25},
 		.config_T8 = {7, 0, 10, 10, 0, 0, 10, 15},
@@ -332,8 +332,8 @@ struct atmel_i2c_platform_data liberty_ts_atmel_data[] = {
 		.abs_pressure_max = 255,
 		.abs_width_min = 0,
 		.abs_width_max = 20,
-		.gpio_irq = LIBERTY_GPIO_TP_ATT_N,
-		.power = liberty_ts_atmel_power,
+		.gpio_irq = PHOTON_GPIO_TP_ATT_N,
+		.power = photon_ts_atmel_power,
 		.config_T6 = {0, 0, 0, 0, 0, 0},
 		.config_T7 = {50, 15, 25},
 		.config_T8 = {8, 0, 20, 10, 0, 0, 5, 25},
@@ -359,8 +359,8 @@ struct atmel_i2c_platform_data liberty_ts_atmel_data[] = {
 		.abs_pressure_max = 255,
 		.abs_width_min = 0,
 		.abs_width_max = 20,
-		.gpio_irq = LIBERTY_GPIO_TP_ATT_N,
-		.power = liberty_ts_atmel_power,
+		.gpio_irq = PHOTON_GPIO_TP_ATT_N,
+		.power = photon_ts_atmel_power,
 		.config_T6 = {0, 0, 0, 0, 0, 0},
 		.config_T7 = {32, 16, 50},
 		.config_T8 = {8, 0, 20, 20, 0, 0, 10, 15},
@@ -377,8 +377,8 @@ struct atmel_i2c_platform_data liberty_ts_atmel_data[] = {
 	}
 };
 
-static int liberty_phy_init_seq[] = { 0x1D, 0x0D, 0x1D, 0x10, -1 };
-static void liberty_phy_reset(void)
+static int photon_phy_init_seq[] = { 0x1D, 0x0D, 0x1D, 0x10, -1 };
+static void photon_phy_reset(void)
 {
 	int ret;
 	printk(KERN_INFO "msm_hsusb_phy_reset\n");
@@ -390,9 +390,9 @@ static void liberty_phy_reset(void)
 
 #ifdef CONFIG_USB_ANDROID
 static struct msm_hsusb_platform_data msm_hsusb_pdata = {
-	.phy_init_seq		= liberty_phy_init_seq,
-	.phy_reset		= liberty_phy_reset,
-	.usb_id_pin_gpio =  LIBERTY_GPIO_USB_ID_PIN,
+	.phy_init_seq		= photon_phy_init_seq,
+	.phy_reset		= photon_phy_reset,
+	.usb_id_pin_gpio =  PHOTON_GPIO_USB_ID_PIN,
 };
 
 static struct usb_mass_storage_platform_data mass_storage_pdata = {
@@ -447,41 +447,41 @@ static struct platform_device android_usb_device = {
 };
 #endif
 static struct akm8973_platform_data compass_platform_data = {
-	.layouts = LIBERTY_LAYOUTS,
-	.project_name = LIBERTY_PROJECT_NAME,
-	.reset = LIBERTY_GPIO_COMPASS_RST_N,
-	.intr = LIBERTY_GPIO_COMPASS_INT_N,
+	.layouts = PHOTON_LAYOUTS,
+	.project_name = PHOTON_PROJECT_NAME,
+	.reset = PHOTON_GPIO_COMPASS_RST_N,
+	.intr = PHOTON_GPIO_COMPASS_INT_N,
 };
 
 static struct i2c_board_info i2c_devices[] = {
 	{
 		I2C_BOARD_INFO(SYNAPTICS_T1007_NAME, 0x20),
-		.platform_data = &liberty_ts_t1007_data,
-		.irq = LIBERTY_GPIO_TO_INT(LIBERTY_GPIO_TP_ATT_N)
+		.platform_data = &photon_ts_t1007_data,
+		.irq = PHOTON_GPIO_TO_INT(PHOTON_GPIO_TP_ATT_N)
 	},
 	{
 		I2C_BOARD_INFO(SYNAPTICS_T1021_NAME, 0x21),
-		.platform_data = &liberty_ts_t1021_data,
-		.irq = LIBERTY_GPIO_TO_INT(LIBERTY_GPIO_TP_ATT_N)
+		.platform_data = &photon_ts_t1021_data,
+		.irq = PHOTON_GPIO_TO_INT(PHOTON_GPIO_TP_ATT_N)
 	},
 	{
 		I2C_BOARD_INFO(ATMEL_QT602240_NAME, 0x94 >> 1),
-		.platform_data = &liberty_ts_atmel_data,
-		.irq = MSM_GPIO_TO_INT(LIBERTY_GPIO_TP_ATT_N)
+		.platform_data = &photon_ts_atmel_data,
+		.irq = MSM_GPIO_TO_INT(PHOTON_GPIO_TP_ATT_N)
 	},
 	{
 		I2C_BOARD_INFO(MICROP_I2C_NAME, 0xCC >> 1),
 		.platform_data = &microp_data,
-		.irq = LIBERTY_GPIO_TO_INT(LIBERTY_GPIO_UP_INT_N)
+		.irq = PHOTON_GPIO_TO_INT(PHOTON_GPIO_UP_INT_N)
 	},
 	{
 		I2C_BOARD_INFO(AKM8973_I2C_NAME, 0x1C),
 		.platform_data = &compass_platform_data,
-		.irq = LIBERTY_GPIO_TO_INT(LIBERTY_GPIO_COMPASS_INT_N),
+		.irq = PHOTON_GPIO_TO_INT(PHOTON_GPIO_COMPASS_INT_N),
 	},
 };
 
-static struct pwr_sink liberty_pwrsink_table[] = {
+static struct pwr_sink photon_pwrsink_table[] = {
 	{
 		.id     = PWRSINK_AUDIO,
 		.ua_max = 100000,
@@ -529,42 +529,42 @@ static struct pwr_sink liberty_pwrsink_table[] = {
 	},
 };
 
-static int liberty_pwrsink_resume_early(struct platform_device *pdev)
+static int photon_pwrsink_resume_early(struct platform_device *pdev)
 {
 	htc_pwrsink_set(PWRSINK_SYSTEM_LOAD, 7);
 	return 0;
 }
 
-static void liberty_pwrsink_resume_late(struct early_suspend *h)
+static void photon_pwrsink_resume_late(struct early_suspend *h)
 {
 	htc_pwrsink_set(PWRSINK_SYSTEM_LOAD, 38);
 }
 
-static void liberty_pwrsink_suspend_early(struct early_suspend *h)
+static void photon_pwrsink_suspend_early(struct early_suspend *h)
 {
 	htc_pwrsink_set(PWRSINK_SYSTEM_LOAD, 7);
 }
 
-static int liberty_pwrsink_suspend_late(struct platform_device *pdev, pm_message_t state)
+static int photon_pwrsink_suspend_late(struct platform_device *pdev, pm_message_t state)
 {
 	htc_pwrsink_set(PWRSINK_SYSTEM_LOAD, 1);
 	return 0;
 }
 
-static struct pwr_sink_platform_data liberty_pwrsink_data = {
-	.num_sinks      = ARRAY_SIZE(liberty_pwrsink_table),
-	.sinks          = liberty_pwrsink_table,
-	.suspend_late	= liberty_pwrsink_suspend_late,
-	.resume_early	= liberty_pwrsink_resume_early,
-	.suspend_early	= liberty_pwrsink_suspend_early,
-	.resume_late	= liberty_pwrsink_resume_late,
+static struct pwr_sink_platform_data photon_pwrsink_data = {
+	.num_sinks      = ARRAY_SIZE(photon_pwrsink_table),
+	.sinks          = photon_pwrsink_table,
+	.suspend_late	= photon_pwrsink_suspend_late,
+	.resume_early	= photon_pwrsink_resume_early,
+	.suspend_early	= photon_pwrsink_suspend_early,
+	.resume_late	= photon_pwrsink_resume_late,
 };
 
-static struct platform_device liberty_pwr_sink = {
+static struct platform_device photon_pwr_sink = {
 	.name = "htc_pwrsink",
 	.id = -1,
 	.dev    = {
-		.platform_data = &liberty_pwrsink_data,
+		.platform_data = &photon_pwrsink_data,
 	},
 };
 
@@ -597,8 +597,8 @@ static struct resource msm_camera_resources[] = {
 };
 
 static struct msm_camera_device_platform_data msm_camera_device_data = {
-	.camera_gpio_on  = config_liberty_camera_on_gpios,
-	.camera_gpio_off = config_liberty_camera_off_gpios,
+	.camera_gpio_on  = config_photon_camera_on_gpios,
+	.camera_gpio_off = config_photon_camera_off_gpios,
 	.ioext.mdcphy = MSM_MDC_PHYS,
 	.ioext.mdcsz  = MSM_MDC_SIZE,
 	.ioext.appphy = MSM_CLK_CTL_PHYS,
@@ -607,8 +607,8 @@ static struct msm_camera_device_platform_data msm_camera_device_data = {
 
 static struct msm_camera_sensor_info msm_camera_sensor_s5k4e1gx_data = {
 	.sensor_name    = "s5k4e1gx",
-	.sensor_reset   = LIBERTY_GPIO_CAM1_RST_N,
-	.vcm_pwd        = LIBERTY_GPIO_VCM_PWDN,
+	.sensor_reset   = PHOTON_GPIO_CAM1_RST_N,
+	.vcm_pwd        = PHOTON_GPIO_VCM_PWDN,
 	.pdata          = &msm_camera_device_data,
 	.flash_type     = MSM_CAMERA_FLASH_LED,
 	.resource       = msm_camera_resources,
@@ -623,8 +623,8 @@ static struct platform_device msm_camera_sensor_s5k4e1gx = {
 };
 #endif
 
-static struct platform_device liberty_rfkill = {
-	.name = "liberty_rfkill",
+static struct platform_device photon_rfkill = {
+	.name = "photon_rfkill",
 	.id = -1,
 };
 
@@ -642,8 +642,8 @@ static int __capella_cm3602_power(int on)
 	printk(KERN_DEBUG "%s: Turn the capella_cm3602 power %s\n",
 		__func__, (on) ? "on" : "off");
 	if (on) {
-		config_liberty_proximity_gpios(1);
-		gpio_direction_output(LIBERTY_GPIO_PROXIMITY_EN, 1);
+		config_photon_proximity_gpios(1);
+		gpio_direction_output(PHOTON_GPIO_PROXIMITY_EN, 1);
 		rc = vreg_enable(vreg);
 		if (rc < 0)
 			printk(KERN_ERR "%s: vreg enable failed\n", __func__);
@@ -651,8 +651,8 @@ static int __capella_cm3602_power(int on)
 		rc = vreg_disable(vreg);
 		if (rc < 0)
 			printk(KERN_ERR "%s: vreg disable failed\n", __func__);
-		gpio_direction_output(LIBERTY_GPIO_PROXIMITY_EN, 0);
-		config_liberty_proximity_gpios(0);
+		gpio_direction_output(PHOTON_GPIO_PROXIMITY_EN, 0);
+		config_photon_proximity_gpios(0);
 	}
 
 	return rc;
@@ -684,10 +684,10 @@ static int capella_cm3602_power(int pwr_device, uint8_t enable)
 }
 
 static struct capella_cm3602_platform_data capella_cm3602_pdata = {
-	.p_out = LIBERTY_GPIO_PROXIMITY_INT,
-	.p_en = LIBERTY_GPIO_PROXIMITY_EN,
+	.p_out = PHOTON_GPIO_PROXIMITY_INT,
+	.p_en = PHOTON_GPIO_PROXIMITY_EN,
 	.power = capella_cm3602_power,
-	.irq = MSM_GPIO_TO_INT(LIBERTY_GPIO_PROXIMITY_INT),
+	.irq = MSM_GPIO_TO_INT(PHOTON_GPIO_PROXIMITY_INT),
 };
 
 static struct platform_device capella_cm3602 = {
@@ -748,7 +748,7 @@ static void curcial_oj_adjust_xy(uint8_t *data, int16_t *mSumDeltaX, int16_t *mS
 	*mSumDeltaX += -((int16_t)deltaX);
 	*mSumDeltaY += -((int16_t)deltaY);
 }
-static struct curcial_oj_platform_data liberty_oj_data = {
+static struct curcial_oj_platform_data photon_oj_data = {
 	.oj_poweron = curcial_oj_poweron,
 	.oj_shutdown = curcial_oj_shutdown,
 	.oj_adjust_xy = curcial_oj_adjust_xy,
@@ -775,11 +775,11 @@ static struct curcial_oj_platform_data liberty_oj_data = {
 	.irq = MSM_uP_TO_INT(12),
 };
 
-static struct platform_device liberty_oj = {
+static struct platform_device photon_oj = {
 	.name = CURCIAL_OJ_NAME,
 	.id = -1,
 	.dev = {
-		.platform_data	= &liberty_oj_data,
+		.platform_data	= &photon_oj_data,
 	}
 };
 
@@ -795,24 +795,24 @@ static void __init msm_device_i2c_init(void)
 	msm_device_i2c.dev.platform_data = &msm_i2c_pdata;
 }
 
-static struct timed_gpio liberty_timed_gpios_str[] = {
+static struct timed_gpio photon_timed_gpios_str[] = {
 	{
 		.name = "vibrator",
-		.gpio = LIBERTY_GPIO_VIB_3V_EN,
+		.gpio = PHOTON_GPIO_VIB_3V_EN,
 		.max_timeout = 15000,
 	},
 };
 
-static struct timed_gpio_platform_data liberty_timed_gpio_data = {
-	.num_gpios	= ARRAY_SIZE(liberty_timed_gpios_str),
-	.gpios		= liberty_timed_gpios_str,
+static struct timed_gpio_platform_data photon_timed_gpio_data = {
+	.num_gpios	= ARRAY_SIZE(photon_timed_gpios_str),
+	.gpios		= photon_timed_gpios_str,
 };
 
-static struct platform_device liberty_timed_gpios = {
+static struct platform_device photon_timed_gpios = {
 	.name		= TIMED_GPIO_NAME,
 	.id		= -1,
 	.dev		= {
-		.platform_data	= &liberty_timed_gpio_data,
+		.platform_data	= &photon_timed_gpio_data,
 	},
 };
 
@@ -824,8 +824,8 @@ static struct msm_serial_hs_platform_data msm_uart_dm1_pdata = {
 };
 
 static struct bcm_bt_lpm_platform_data bcm_bt_lpm_pdata = {
-        .gpio_wake = LIBERTY_GPIO_BT_CHIP_WAKE,
-        .gpio_host_wake = LIBERTY_GPIO_BT_HOST_WAKE,
+        .gpio_wake = PHOTON_GPIO_BT_CHIP_WAKE,
+        .gpio_host_wake = PHOTON_GPIO_BT_HOST_WAKE,
         .request_clock_off_locked = msm_hs_request_clock_off_locked,
         .request_clock_on_locked = msm_hs_request_clock_on_locked,
 };
@@ -860,14 +860,14 @@ MODULE_PARM_DESC(bdaddr, "bluetooth address");
 
 #elif defined(CONFIG_SERIAL_MSM_HS)
 static struct msm_serial_hs_platform_data msm_uart_dm1_pdata = {
-	.wakeup_irq = MSM_GPIO_TO_INT(LIBERTY_GPIO_BT_HOST_WAKE),
+	.wakeup_irq = MSM_GPIO_TO_INT(PHOTON_GPIO_BT_HOST_WAKE),
 	.inject_rx_on_wakeup = 0,
 	.cpu_lock_supported = 1,
 
 	/* for bcm */
 	.bt_wakeup_pin_supported = 1,
-	.bt_wakeup_pin = LIBERTY_GPIO_BT_CHIP_WAKE,
-	.host_wakeup_pin = LIBERTY_GPIO_BT_HOST_WAKE,
+	.bt_wakeup_pin = PHOTON_GPIO_BT_CHIP_WAKE,
+	.host_wakeup_pin = PHOTON_GPIO_BT_HOST_WAKE,
 
 };
 #endif
@@ -880,20 +880,20 @@ static struct platform_device *devices[] __initdata = {
 #endif
 	&htc_battery_pdev,
 	&msm_camera_sensor_s5k4e1gx,
-	&liberty_rfkill,
+	&photon_rfkill,
 #ifdef CONFIG_HTC_PWRSINK
-	&liberty_pwr_sink,
+	&photon_pwr_sink,
 #endif
-	&liberty_oj,
+	&photon_oj,
 	&capella_cm3602,
-	&liberty_timed_gpios,
+	&photon_timed_gpios,
 };
 
 extern struct sys_timer msm_timer;
 
-static void __init liberty_init_irq(void)
+static void __init photon_init_irq(void)
 {
-	printk("liberty_init_irq()\n");
+	printk("photon_init_irq()\n");
 	msm_init_irq();
 }
 
@@ -917,18 +917,18 @@ static char bt_fw_version[10] = "v2.0.38";
 module_param_string(bt_fw_version, bt_fw_version, sizeof(bt_fw_version), S_IWUSR | S_IRUGO);
 MODULE_PARM_DESC(bt_fw_version, "BT's fw version");
 
-static void liberty_reset(void)
+static void photon_reset(void)
 {
-	gpio_set_value(LIBERTY_GPIO_PS_HOLD, 0);
+	gpio_set_value(PHOTON_GPIO_PS_HOLD, 0);
 }
 
 static uint32_t proximity_on_gpio_table[] = {
-	PCOM_GPIO_CFG(LIBERTY_GPIO_PROXIMITY_INT,
+	PCOM_GPIO_CFG(PHOTON_GPIO_PROXIMITY_INT,
 		0, GPIO_INPUT, GPIO_NO_PULL, 0), /* PS_VOUT */
 };
 
 static uint32_t proximity_off_gpio_table[] = {
-	PCOM_GPIO_CFG(LIBERTY_GPIO_PROXIMITY_INT,
+	PCOM_GPIO_CFG(PHOTON_GPIO_PROXIMITY_INT,
 		0, GPIO_INPUT, GPIO_PULL_DOWN, 0) /* PS_VOUT */
 };
 
@@ -980,19 +980,19 @@ static uint32_t camera_on_gpio_table[] = {
 	PCOM_GPIO_CFG(15, 1, GPIO_OUTPUT, GPIO_PULL_DOWN, GPIO_16MA), /* MCLK */
 };
 
-void config_liberty_camera_on_gpios(void)
+void config_photon_camera_on_gpios(void)
 {
 	config_gpio_table(camera_on_gpio_table,
 		ARRAY_SIZE(camera_on_gpio_table));
 }
 
-void config_liberty_camera_off_gpios(void)
+void config_photon_camera_off_gpios(void)
 {
 	config_gpio_table(camera_off_gpio_table,
 		ARRAY_SIZE(camera_off_gpio_table));
 }
 
-void config_liberty_proximity_gpios(int on)
+void config_photon_proximity_gpios(int on)
 {
 	if (on)
 		config_gpio_table(proximity_on_gpio_table,
@@ -1021,27 +1021,27 @@ module_param_string(bdaddress, bdaddress, sizeof(bdaddress), S_IWUSR | S_IRUGO);
 MODULE_PARM_DESC(bdaddress, "BT MAC ADDRESS");
 #endif
 
-static uint32_t liberty_serial_debug_table[] = {
+static uint32_t photon_serial_debug_table[] = {
 	/* config as serial debug uart */
-	PCOM_GPIO_CFG(LIBERTY_GPIO_UART3_RX, 1,
+	PCOM_GPIO_CFG(PHOTON_GPIO_UART3_RX, 1,
 			GPIO_INPUT, GPIO_PULL_UP, GPIO_8MA),	/* UART3 RX */
-	PCOM_GPIO_CFG(LIBERTY_GPIO_UART3_TX, 1,
+	PCOM_GPIO_CFG(PHOTON_GPIO_UART3_TX, 1,
 			GPIO_OUTPUT, GPIO_NO_PULL, GPIO_8MA),	/* UART3 TX */
 };
 
-static void liberty_config_serial_debug_gpios(void)
+static void photon_config_serial_debug_gpios(void)
 {
-	config_gpio_table(liberty_serial_debug_table,
-			ARRAY_SIZE(liberty_serial_debug_table));
+	config_gpio_table(photon_serial_debug_table,
+			ARRAY_SIZE(photon_serial_debug_table));
 }
 
 static void __init config_gpios(void)
 {
-	liberty_config_serial_debug_gpios();
-	config_liberty_camera_off_gpios();
+	photon_config_serial_debug_gpios();
+	config_photon_camera_off_gpios();
 }
 
-static struct msm_acpu_clock_platform_data liberty_clock_data = {
+static struct msm_acpu_clock_platform_data photon_clock_data = {
 	.acpu_switch_time_us = 50,
 	.max_speed_delta_khz = 256000,
 	.vdd_switch_time_us = 62,
@@ -1049,18 +1049,18 @@ static struct msm_acpu_clock_platform_data liberty_clock_data = {
 	.wait_for_irq_khz = 200000,
 };
 
-static unsigned liberty_perf_acpu_table[] = {
+static unsigned photon_perf_acpu_table[] = {
 	245760000,
 	480000000,
 	600000000,
 };
 
-static struct perflock_platform_data liberty_perflock_data = {
-	.perf_acpu_table = liberty_perf_acpu_table,
-	.table_size = ARRAY_SIZE(liberty_perf_acpu_table),
+static struct perflock_platform_data photon_perflock_data = {
+	.perf_acpu_table = photon_perf_acpu_table,
+	.table_size = ARRAY_SIZE(photon_perf_acpu_table),
 };
 
-static ssize_t liberty_virtual_keys_show(struct kobject *kobj,
+static ssize_t photon_virtual_keys_show(struct kobject *kobj,
 			       struct kobj_attribute *attr, char *buf)
 {
 	if (system_rev > 1) {
@@ -1083,39 +1083,39 @@ static ssize_t liberty_virtual_keys_show(struct kobject *kobj,
 	}
 }
 
-static struct kobj_attribute liberty_synaptics_virtual_keys_attr = {
+static struct kobj_attribute photon_synaptics_virtual_keys_attr = {
 	.attr = {
 		.name = "virtualkeys.synaptics-rmi-touchscreen",
 		.mode = S_IRUGO,
 	},
-	.show = &liberty_virtual_keys_show,
+	.show = &photon_virtual_keys_show,
 };
 
-static struct kobj_attribute liberty_atmel_virtual_keys_attr = {
+static struct kobj_attribute photon_atmel_virtual_keys_attr = {
 	.attr = {
 		.name = "virtualkeys.atmel-touchscreen",
 		.mode = S_IRUGO,
 	},
-	.show = &liberty_virtual_keys_show,
+	.show = &photon_virtual_keys_show,
 };
 
-static struct attribute *liberty_properties_attrs[] = {
-	&liberty_synaptics_virtual_keys_attr.attr,
-	&liberty_atmel_virtual_keys_attr.attr,
+static struct attribute *photon_properties_attrs[] = {
+	&photon_synaptics_virtual_keys_attr.attr,
+	&photon_atmel_virtual_keys_attr.attr,
 	NULL
 };
 
-static struct attribute_group liberty_properties_attr_group = {
-	.attrs = liberty_properties_attrs,
+static struct attribute_group photon_properties_attr_group = {
+	.attrs = photon_properties_attrs,
 };
 
-static void __init liberty_init(void)
+static void __init photon_init(void)
 {
 	int rc;
 	char *cid = NULL;
 	struct kobject *properties_kobj;
 
-	printk("liberty_init() revision = 0x%X\n", system_rev);
+	printk("photon_init() revision = 0x%X\n", system_rev);
 	board_get_cid_tag(&cid);
 
 	/* for bcm */
@@ -1130,21 +1130,21 @@ static void __init liberty_init(void)
 	 * not actually enable the chip until we apply power to it via
 	 * vreg.
 	 */
-	gpio_request(LIBERTY_GPIO_LS_EN, "ls_en");
-	gpio_direction_output(LIBERTY_GPIO_LS_EN, 0);
+	gpio_request(PHOTON_GPIO_LS_EN, "ls_en");
+	gpio_direction_output(PHOTON_GPIO_LS_EN, 0);
 	/* disable power for cm3602 chip */
 	/* __capella_cm3602_power(0); */
 
-	msm_hw_reset_hook = liberty_reset;
+	msm_hw_reset_hook = photon_reset;
 
-	msm_acpu_clock_init(&liberty_clock_data);
-	perflock_init(&liberty_perflock_data);
+	msm_acpu_clock_init(&photon_clock_data);
+	perflock_init(&photon_perflock_data);
 
 #if defined(CONFIG_MSM_SERIAL_DEBUGGER)
 	if (!opt_disable_uart3)
 		msm_serial_debug_init(MSM_UART3_PHYS, INT_UART3,
 			&msm_device_uart3.dev, 1,
-				MSM_GPIO_TO_INT(LIBERTY_GPIO_UART3_RX));
+				MSM_GPIO_TO_INT(PHOTON_GPIO_UART3_RX));
 #endif
 
 	msm_add_devices();
@@ -1164,8 +1164,8 @@ static void __init liberty_init(void)
 	msm_change_usb_id(0x0bb4, 0x0c10);
 	*/
 #ifdef CONFIG_USB_FUNCTION
-	msm_add_usb_id_pin_gpio(LIBERTY_GPIO_USB_ID_PIN);
-	msm_add_usb_devices(liberty_phy_reset, NULL);
+	msm_add_usb_id_pin_gpio(PHOTON_GPIO_USB_ID_PIN);
+	msm_add_usb_devices(photon_phy_reset, NULL);
 #endif
 
 #ifdef CONFIG_USB_ANDROID
@@ -1184,17 +1184,17 @@ static void __init liberty_init(void)
 	msm_add_mem_devices(&pmem_setting);
 
 #ifdef CONFIG_MICROP_COMMON
-	liberty_microp_init();
+	photon_microp_init();
 #endif
 
-	rc = liberty_init_mmc(system_rev);
+	rc = photon_init_mmc(system_rev);
 	if (rc)
 		printk(KERN_CRIT "%s: MMC init failure (%d)\n", __func__, rc);
 
 	properties_kobj = kobject_create_and_add("board_properties", NULL);
 	if (properties_kobj)
 		rc = sysfs_create_group(properties_kobj,
-						&liberty_properties_attr_group);
+						&photon_properties_attr_group);
 	if (!properties_kobj || rc)
 		pr_err("failed to create board_properties\n");
 
@@ -1205,12 +1205,12 @@ static void __init liberty_init(void)
 	platform_add_devices(devices, ARRAY_SIZE(devices));
 	i2c_register_board_info(0, i2c_devices, ARRAY_SIZE(i2c_devices));
 
-	liberty_init_panel();
+	photon_init_panel();
 
-	liberty_init_keypad();
+	photon_init_keypad();
 }
 
-static void __init liberty_fixup(struct machine_desc *desc, struct tag *tags,
+static void __init photon_fixup(struct machine_desc *desc, struct tag *tags,
                                char **cmdline, struct meminfo *mi)
 {
 	mi->nr_banks=1;
@@ -1219,9 +1219,9 @@ static void __init liberty_fixup(struct machine_desc *desc, struct tag *tags,
 	mi->bank[0].size = MSM_LINUX_SIZE;
 }
 
-static void __init liberty_map_io(void)
+static void __init photon_map_io(void)
 {
-	printk("liberty_init_map_io()\n");
+	printk("photon_init_map_io()\n");
 	msm_map_common_io();
 	msm_clock_init();
 #ifdef CONFIG_CACHE_L2X0
@@ -1240,9 +1240,9 @@ MACHINE_START(PHOTON, "photon")
 	.io_pg_offst    = ((MSM_DEBUG_UART_BASE) >> 18) & 0xfffc,
 #endif
 	.boot_params    = 0x12C00100,
-	.fixup          = liberty_fixup,
-	.map_io         = liberty_map_io,
-	.init_irq       = liberty_init_irq,
-	.init_machine   = liberty_init,
+	.fixup          = photon_fixup,
+	.map_io         = photon_map_io,
+	.init_irq       = photon_init_irq,
+	.init_machine   = photon_init,
 	.timer          = &msm_timer,
 MACHINE_END

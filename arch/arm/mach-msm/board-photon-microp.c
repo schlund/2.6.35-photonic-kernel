@@ -20,9 +20,9 @@
 
 #include "board-photon.h"
 
-static struct i2c_client *liberty_microp_client;
+static struct i2c_client *photon_microp_client;
 
-static int liberty_microp_function_init(struct i2c_client *client)
+static int photon_microp_function_init(struct i2c_client *client)
 {
 	struct microp_i2c_platform_data *pdata;
 	struct microp_i2c_client_data *cdata;
@@ -30,7 +30,7 @@ static int liberty_microp_function_init(struct i2c_client *client)
 	int i, j;
 	int ret;
 
-	liberty_microp_client = client;
+	photon_microp_client = client;
 	pdata = client->dev.platform_data;
 	cdata = i2c_get_clientdata(client);
 
@@ -75,10 +75,10 @@ exit:
 }
 
 static struct microp_ops ops = {
-	.init_microp_func = liberty_microp_function_init,
+	.init_microp_func = photon_microp_function_init,
 };
 
-void __init liberty_microp_init(void)
+void __init photon_microp_init(void)
 {
 	microp_register_ops(&ops);
 }

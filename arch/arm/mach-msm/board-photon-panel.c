@@ -39,23 +39,23 @@
 #define B(s...) do {} while (0)
 #endif
 
-static struct led_trigger *liberty_lcd_backlight;
-static void liberty_set_backlight(int on)
+static struct led_trigger *photon_lcd_backlight;
+static void photon_set_backlight(int on)
 {
 	B(KERN_DEBUG "%s: enter.\n", __func__);
 	if (on) {
 		/* vsync back porch is about 17 ms */
 		msleep(40);
-		led_trigger_event(liberty_lcd_backlight, LED_FULL);
+		led_trigger_event(photon_lcd_backlight, LED_FULL);
 	} else
-		led_trigger_event(liberty_lcd_backlight, LED_OFF);
+		led_trigger_event(photon_lcd_backlight, LED_OFF);
 }
 
 static struct vreg *vreg_lcm_2v6;
 static struct vreg *vreg_lcm_2v85;
 
 static void
-liberty_mddi_eid_power(struct msm_mddi_client_data *client_data, int on)
+photon_mddi_eid_power(struct msm_mddi_client_data *client_data, int on)
 {
 	unsigned id, on_off = 1;
 
@@ -74,12 +74,12 @@ liberty_mddi_eid_power(struct msm_mddi_client_data *client_data, int on)
 		vreg_enable(vreg_lcm_2v85);
 		mdelay(10);
 
-		gpio_set_value(LIBERTY_LCD_RSTz, 1);
+		gpio_set_value(PHOTON_LCD_RSTz, 1);
 		msleep(30);
 	} else {
 		on_off = 1;
 		mdelay(10);
-		gpio_set_value(LIBERTY_LCD_RSTz, 0);
+		gpio_set_value(PHOTON_LCD_RSTz, 0);
 		mdelay(10);
 
 		/* 2V8(pmic rfrx2) */
@@ -96,25 +96,25 @@ liberty_mddi_eid_power(struct msm_mddi_client_data *client_data, int on)
 }
 
 static int
-liberty_panel_unblank(struct msm_mddi_bridge_platform_data *bridge_data,
+photon_panel_unblank(struct msm_mddi_bridge_platform_data *bridge_data,
 		struct msm_mddi_client_data *client_data)
 {
 	B(KERN_DEBUG "%s: enter.\n", __func__);
-	liberty_set_backlight(1);
+	photon_set_backlight(1);
 	return 0;
 }
 
 static int
-liberty_panel_blank(struct msm_mddi_bridge_platform_data *bridge_data,
+photon_panel_blank(struct msm_mddi_bridge_platform_data *bridge_data,
 		struct msm_mddi_client_data *client_data)
 {
 	B(KERN_DEBUG "%s: enter.\n", __func__);
-	liberty_set_backlight(0);
+	photon_set_backlight(0);
 	return 0;
 }
 
 static int
-liberty_panel_shrink(int brightness)
+photon_panel_shrink(int brightness)
 {
 		if (brightness <= 142) {
 			if (brightness <= 30)
@@ -127,12 +127,12 @@ liberty_panel_shrink(int brightness)
 	return brightness;
 }
 
-static int liberty_panel_shutdown(
+static int photon_panel_shutdown(
                 struct msm_mddi_bridge_platform_data *bridge_data,
                 struct msm_mddi_client_data *client_data)
 {
         B("%s\n", __func__);
-        liberty_mddi_eid_power(client_data, 0);
+        photon_mddi_eid_power(client_data, 0);
         return 0;
 }
 
@@ -146,9 +146,9 @@ static void panel_eid_fixup(uint16_t *mfr_name, uint16_t *product_code)
 static u8 pwm_eid[10] = {8, 16, 34, 61, 96, 138, 167, 195, 227, 255};
 
 static struct msm_mddi_bridge_platform_data eid_client_data = {
-	.blank = liberty_panel_blank,
-	.unblank = liberty_panel_unblank,
-	.shutdown = liberty_panel_shutdown,
+	.blank = photon_panel_blank,
+	.unblank = photon_panel_unblank,
+	.shutdown = photon_panel_shutdown,
 	.fb_data = {
 		.xres = 320,
 		.yres = 480,
@@ -166,16 +166,16 @@ static struct resource resources_msm_fb[] = {
 	},
 };
 
-static struct msm_mdp_platform_data liberty_mdp_pdata = {
+static struct msm_mdp_platform_data photon_mdp_pdata = {
 	.tearing_check = 1,
 	.sync_config = 0x40380264,
 	.sync_thresh = 0x5008a,
 	.sync_start_pos = 0x12,
 };
 
-static struct msm_mddi_platform_data liberty_pdata = {
+static struct msm_mddi_platform_data photon_pdata = {
 	.clk_rate = 106000000,
-	.power_client = liberty_mddi_eid_power,
+	.power_client = photon_mddi_eid_power,
 	.fixup = panel_eid_fixup,
 	.fb_resource = resources_msm_fb,
 	.num_clients = 1,
@@ -201,7 +201,7 @@ static struct msm_mddi_platform_data liberty_pdata = {
  *
  * jay: Nov 20, 08'
  */
-int __init liberty_init_panel(void)
+int __init photon_init_panel(void)
 {
 	int rc;
 	int panel_type = 0;
@@ -220,13 +220,13 @@ int __init liberty_init_panel(void)
 	if (IS_ERR(vreg_lcm_2v85))
 		return PTR_ERR(vreg_lcm_2v85);
 
-	gpio_lcd_id0 =  PCOM_GPIO_CFG(LIBERTY_GPIO_LCD_ID0, 0, GPIO_INPUT, GPIO_NO_PULL, GPIO_2MA);
-	gpio_lcd_id1 =  PCOM_GPIO_CFG(LIBERTY_GPIO_LCD_ID1, 0, GPIO_INPUT, GPIO_NO_PULL, GPIO_2MA);
+	gpio_lcd_id0 =  PCOM_GPIO_CFG(PHOTON_GPIO_LCD_ID0, 0, GPIO_INPUT, GPIO_NO_PULL, GPIO_2MA);
+	gpio_lcd_id1 =  PCOM_GPIO_CFG(PHOTON_GPIO_LCD_ID1, 0, GPIO_INPUT, GPIO_NO_PULL, GPIO_2MA);
 	msm_proc_comm(PCOM_RPC_GPIO_TLMM_CONFIG_EX, &gpio_lcd_id0, 0);
 	msm_proc_comm(PCOM_RPC_GPIO_TLMM_CONFIG_EX, &gpio_lcd_id1, 0);
 
-	panel_id = gpio_get_value(LIBERTY_GPIO_LCD_ID0) |
-	           (gpio_get_value(LIBERTY_GPIO_LCD_ID1) << 1);
+	panel_id = gpio_get_value(PHOTON_GPIO_LCD_ID0) |
+	           (gpio_get_value(PHOTON_GPIO_LCD_ID1) << 1);
 
 	B(KERN_INFO "%s: panel_id:%d.\n", __func__,panel_id);
 
@@ -246,24 +246,24 @@ int __init liberty_init_panel(void)
 	panel_data->caps = MSMFB_CAP_CABC;
 	panel_data->pwm = pwm_eid;
 	panel_data->shrink = 1;
-	panel_data->shrink_br = liberty_panel_shrink;
+	panel_data->shrink_br = photon_panel_shrink;
 	panel_data->default_br = 83;
 
-	config = PCOM_GPIO_CFG(LIBERTY_GPIO_LCD_VSYNC, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA);
+	config = PCOM_GPIO_CFG(PHOTON_GPIO_LCD_VSYNC, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA);
 	msm_proc_comm(PCOM_RPC_GPIO_TLMM_CONFIG_EX, &config, 0);
 
-	msm_device_mdp.dev.platform_data = &liberty_mdp_pdata;
+	msm_device_mdp.dev.platform_data = &photon_mdp_pdata;
 	rc = platform_device_register(&msm_device_mdp);
 	if (rc)
 		return rc;
 
-	msm_device_mddi0.dev.platform_data = &liberty_pdata;
+	msm_device_mddi0.dev.platform_data = &photon_pdata;
 	rc = platform_device_register(&msm_device_mddi0);
 	if (rc)
 		return rc;
 
-	led_trigger_register_simple("lcd-backlight-gate", &liberty_lcd_backlight);
-	if (IS_ERR(liberty_lcd_backlight))
+	led_trigger_register_simple("lcd-backlight-gate", &photon_lcd_backlight);
+	if (IS_ERR(photon_lcd_backlight))
 		printk(KERN_ERR "%s: backlight registration failed!\n",
 			__func__);
 	return 0;

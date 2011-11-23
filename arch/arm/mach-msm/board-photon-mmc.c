@@ -62,7 +62,7 @@ static uint32_t sdcard_off_gpio_table[] = {
 
 static uint opt_disable_sdcard;
 
-static int __init liberty_disablesdcard_setup(char *str)
+static int __init photon_disablesdcard_setup(char *str)
 {
 	int cal = simple_strtol(str, NULL, 0);
 
@@ -70,7 +70,7 @@ static int __init liberty_disablesdcard_setup(char *str)
 	return 1;
 }
 
-__setup("board_liberty.disable_sdcard=", liberty_disablesdcard_setup);
+__setup("board_photon.disable_sdcard=", photon_disablesdcard_setup);
 
 static struct vreg *vreg_sdslot;	/* SD slot power */
 
@@ -87,7 +87,7 @@ static struct mmc_vdd_xlat mmc_vdd_table[] = {
 static unsigned int sdslot_vdd = 0xffffffff;
 static unsigned int sdslot_vreg_enabled;
 
-static uint32_t liberty_sdslot_switchvdd(struct device *dev, unsigned int vdd)
+static uint32_t photon_sdslot_switchvdd(struct device *dev, unsigned int vdd)
 {
 	int i;
 
@@ -154,24 +154,24 @@ out:
 	return 0;
 }
 
-static unsigned int liberty_sdslot_status(struct device *dev)
+static unsigned int photon_sdslot_status(struct device *dev)
 {
 	unsigned int status;
 
-	status = (unsigned int) gpio_get_value(LIBERTY_GPIO_SDMC_CD_N);
+	status = (unsigned int) gpio_get_value(PHOTON_GPIO_SDMC_CD_N);
 	return (!status);
 }
 
-#define LIBERTY_MMC_VDD		(MMC_VDD_28_29 | MMC_VDD_29_30)
+#define PHOTON_MMC_VDD		(MMC_VDD_28_29 | MMC_VDD_29_30)
 
-static unsigned int liberty_sdslot_type = MMC_TYPE_SD;
+static unsigned int photon_sdslot_type = MMC_TYPE_SD;
 
-static struct mmc_platform_data liberty_sdslot_data = {
-	.ocr_mask	= LIBERTY_MMC_VDD,
-	.status_irq	= MSM_GPIO_TO_INT(LIBERTY_GPIO_SDMC_CD_N),
-	.status		= liberty_sdslot_status,
-	.translate_vdd	= liberty_sdslot_switchvdd,
-	.slot_type	= &liberty_sdslot_type,
+static struct mmc_platform_data photon_sdslot_data = {
+	.ocr_mask	= PHOTON_MMC_VDD,
+	.status_irq	= MSM_GPIO_TO_INT(PHOTON_GPIO_SDMC_CD_N),
+	.status		= photon_sdslot_status,
+	.translate_vdd	= photon_sdslot_switchvdd,
+	.slot_type	= &photon_sdslot_type,
 };
 
 /* ---- WIFI ---- */
@@ -199,7 +199,7 @@ static uint32_t wifi_off_gpio_table[] = {
 /* BCM4329 returns wrong sdio_vsn(1) when we read cccr,
  * we use predefined value (sdio_vsn=2) here to initial sdio driver well
  */
-static struct embedded_sdio_data liberty_wifi_emb_data = {
+static struct embedded_sdio_data photon_wifi_emb_data = {
 	.cccr	= {
 		.sdio_vsn	= 2,
 		.multi_block	= 1,
@@ -210,12 +210,12 @@ static struct embedded_sdio_data liberty_wifi_emb_data = {
 	},
 };
 
-static int liberty_wifi_cd;		/* WIFI virtual 'card detect' status */
+static int photon_wifi_cd;		/* WIFI virtual 'card detect' status */
 static void (*wifi_status_cb)(int card_present, void *dev_id);
 static void *wifi_status_cb_devid;
 
 static int
-liberty_wifi_status_register(void (*callback)(int card_present, void *dev_id),
+photon_wifi_status_register(void (*callback)(int card_present, void *dev_id),
 				void *dev_id)
 {
 	if (wifi_status_cb)
@@ -225,31 +225,31 @@ liberty_wifi_status_register(void (*callback)(int card_present, void *dev_id),
 	return 0;
 }
 
-static unsigned int liberty_wifi_status(struct device *dev)
+static unsigned int photon_wifi_status(struct device *dev)
 {
-	return liberty_wifi_cd;
+	return photon_wifi_cd;
 }
 
-static struct mmc_platform_data liberty_wifi_data = {
+static struct mmc_platform_data photon_wifi_data = {
 	.ocr_mask		= MMC_VDD_28_29,
-	.status			= liberty_wifi_status,
-	.register_status_notify	= liberty_wifi_status_register,
-	.embedded_sdio		= &liberty_wifi_emb_data,
+	.status			= photon_wifi_status,
+	.register_status_notify	= photon_wifi_status_register,
+	.embedded_sdio		= &photon_wifi_emb_data,
 };
 
-int liberty_wifi_set_carddetect(int val)
+int photon_wifi_set_carddetect(int val)
 {
 	printk(KERN_INFO "%s: %d\n", __func__, val);
-	liberty_wifi_cd = val;
+	photon_wifi_cd = val;
 	if (wifi_status_cb)
 		wifi_status_cb(val, wifi_status_cb_devid);
 	else
 		printk(KERN_WARNING "%s: Nobody to notify\n", __func__);
 	return 0;
 }
-EXPORT_SYMBOL(liberty_wifi_set_carddetect);
+EXPORT_SYMBOL(photon_wifi_set_carddetect);
 
-int liberty_wifi_power(int on)
+int photon_wifi_power(int on)
 {
 	int rc = 0;
 
@@ -267,19 +267,19 @@ int liberty_wifi_power(int on)
 	}
 
 	mdelay(100);
-	gpio_set_value(LIBERTY_GPIO_WIFI_EN, on);
+	gpio_set_value(PHOTON_GPIO_WIFI_EN, on);
 	mdelay(100);
 	return 0;
 }
-EXPORT_SYMBOL(liberty_wifi_power);
+EXPORT_SYMBOL(photon_wifi_power);
 
-int liberty_wifi_reset(int on)
+int photon_wifi_reset(int on)
 {
 	printk(KERN_INFO "%s: do nothing\n", __func__);
 	return 0;
 }
 
-int __init liberty_init_mmc(unsigned int sys_rev)
+int __init photon_init_mmc(unsigned int sys_rev)
 {
 
 	uint32_t id;
@@ -287,19 +287,19 @@ int __init liberty_init_mmc(unsigned int sys_rev)
 
 
 	/* initial WIFI_SHUTDOWN */
-	id = PCOM_GPIO_CFG(LIBERTY_GPIO_WIFI_EN, 0, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
+	id = PCOM_GPIO_CFG(PHOTON_GPIO_WIFI_EN, 0, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
 	msm_proc_comm(PCOM_RPC_GPIO_TLMM_CONFIG_EX, &id, 0);
-	gpio_set_value(LIBERTY_GPIO_WIFI_EN, 0);
+	gpio_set_value(PHOTON_GPIO_WIFI_EN, 0);
 
 	wifi_status_cb = NULL;
 
 	printk(KERN_INFO "%s\n", __func__);
 
-	msm_add_sdcc(1, &liberty_wifi_data, 0, 0);
+	msm_add_sdcc(1, &photon_wifi_data, 0, 0);
 
 
 	if (opt_disable_sdcard) {
-		printk(KERN_INFO "liberty: SD-Card interface disabled\n");
+		printk(KERN_INFO "photon: SD-Card interface disabled\n");
 		goto done;
 	}
 
@@ -307,9 +307,9 @@ int __init liberty_init_mmc(unsigned int sys_rev)
 	if (IS_ERR(vreg_sdslot))
 		return PTR_ERR(vreg_sdslot);
 
-	set_irq_wake(MSM_GPIO_TO_INT(LIBERTY_GPIO_SDMC_CD_N), 1);
+	set_irq_wake(MSM_GPIO_TO_INT(PHOTON_GPIO_SDMC_CD_N), 1);
 
-	msm_add_sdcc(2, &liberty_sdslot_data, MSM_GPIO_TO_INT(LIBERTY_GPIO_SDMC_CD_N),
+	msm_add_sdcc(2, &photon_sdslot_data, MSM_GPIO_TO_INT(PHOTON_GPIO_SDMC_CD_N),
 			IORESOURCE_IRQ_LOWEDGE | IORESOURCE_IRQ_HIGHEDGE);
 done:
 	return 0;

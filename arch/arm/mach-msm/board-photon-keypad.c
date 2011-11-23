@@ -26,25 +26,25 @@
 
 static char *keycaps = "--qwerty";
 #undef MODULE_PARAM_PREFIX
-#define MODULE_PARAM_PREFIX "board_liberty."
+#define MODULE_PARAM_PREFIX "board_photon."
 
 module_param_named(keycaps, keycaps, charp, 0);
 
-static unsigned int liberty_col_gpios[] = {
-	LIBERTY_GPIO_KP_MKOUT0, //35
-	LIBERTY_GPIO_KP_MKOUT1, //34
-	LIBERTY_GPIO_KP_MKOUT2, //33
+static unsigned int photon_col_gpios[] = {
+	PHOTON_GPIO_KP_MKOUT0, //35
+	PHOTON_GPIO_KP_MKOUT1, //34
+	PHOTON_GPIO_KP_MKOUT2, //33
 };
-static unsigned int liberty_row_gpios[] = {
-	LIBERTY_GPIO_KP_MKIN0, //42
-	LIBERTY_GPIO_KP_MKIN1, //41
-	LIBERTY_GPIO_KP_MKIN2, //40
+static unsigned int photon_row_gpios[] = {
+	PHOTON_GPIO_KP_MKIN0, //42
+	PHOTON_GPIO_KP_MKIN1, //41
+	PHOTON_GPIO_KP_MKIN2, //40
 };
 
-#define KEYMAP_INDEX(col, row) ((col)*ARRAY_SIZE(liberty_row_gpios) + (row))
+#define KEYMAP_INDEX(col, row) ((col)*ARRAY_SIZE(photon_row_gpios) + (row))
 
-static const unsigned short liberty_keymap[ARRAY_SIZE(liberty_col_gpios) *
-					ARRAY_SIZE(liberty_row_gpios)] = {
+static const unsigned short photon_keymap[ARRAY_SIZE(photon_col_gpios) *
+					ARRAY_SIZE(photon_row_gpios)] = {
 	[KEYMAP_INDEX(0, 0)] = KEY_VOLUMEUP,
 	[KEYMAP_INDEX(0, 1)] = KEY_VOLUMEDOWN,
 	[KEYMAP_INDEX(0, 2)] = KEY_RESERVED,
@@ -58,14 +58,14 @@ static const unsigned short liberty_keymap[ARRAY_SIZE(liberty_col_gpios) *
 	[KEYMAP_INDEX(2, 2)] = BTN_MOUSE, /* OJ_ACTION */
 };
 
-static void liberty_matrix_inputs_gpio(void)
+static void photon_matrix_inputs_gpio(void)
 {
 	static uint32_t matirx_inputs_gpio_table[] = {
-		PCOM_GPIO_CFG(LIBERTY_GPIO_KP_MKIN0, 0, GPIO_INPUT,
+		PCOM_GPIO_CFG(PHOTON_GPIO_KP_MKIN0, 0, GPIO_INPUT,
 						GPIO_PULL_UP, GPIO_4MA),
-		PCOM_GPIO_CFG(LIBERTY_GPIO_KP_MKIN1, 0, GPIO_INPUT,
+		PCOM_GPIO_CFG(PHOTON_GPIO_KP_MKIN1, 0, GPIO_INPUT,
 						GPIO_PULL_UP, GPIO_4MA),
-		PCOM_GPIO_CFG(LIBERTY_GPIO_KP_MKIN2, 0, GPIO_INPUT,
+		PCOM_GPIO_CFG(PHOTON_GPIO_KP_MKIN2, 0, GPIO_INPUT,
 						GPIO_PULL_UP, GPIO_4MA),
 	};
 
@@ -73,14 +73,14 @@ static void liberty_matrix_inputs_gpio(void)
 		ARRAY_SIZE(matirx_inputs_gpio_table));
 }
 
-static struct gpio_event_matrix_info liberty_keypad_matrix_info = {
+static struct gpio_event_matrix_info photon_keypad_matrix_info = {
 	.info.func = gpio_event_matrix_func,
 	.info.oj_btn = true,
-	.keymap = liberty_keymap,
-	.output_gpios = liberty_col_gpios,
-	.input_gpios = liberty_row_gpios,
-	.noutputs = ARRAY_SIZE(liberty_col_gpios),
-	.ninputs = ARRAY_SIZE(liberty_row_gpios),
+	.keymap = photon_keymap,
+	.output_gpios = photon_col_gpios,
+	.input_gpios = photon_row_gpios,
+	.noutputs = ARRAY_SIZE(photon_col_gpios),
+	.ninputs = ARRAY_SIZE(photon_row_gpios),
 	.settle_time.tv.nsec = 40 * NSEC_PER_USEC,
 	.poll_time.tv.nsec = 20 * NSEC_PER_MSEC,
 	.debounce_delay.tv.nsec = 5 * NSEC_PER_MSEC,
@@ -88,23 +88,23 @@ static struct gpio_event_matrix_info liberty_keypad_matrix_info = {
 		  GPIOKPF_REMOVE_PHANTOM_KEYS |
 		  GPIOKPF_PRINT_UNMAPPED_KEYS /*|
 		   GPIOKPF_PRINT_MAPPED_KEYS */),
-	.setup_ninputs_gpio = liberty_matrix_inputs_gpio,
+	.setup_ninputs_gpio = photon_matrix_inputs_gpio,
 	.detect_phone_status = 0,
 };
 
-static struct gpio_event_direct_entry liberty_keypad_nav_map[] = {
+static struct gpio_event_direct_entry photon_keypad_nav_map[] = {
 	{
-		.gpio = LIBERTY_POWER_KEY,
+		.gpio = PHOTON_POWER_KEY,
 		.code = KEY_POWER,
 	},
 };
 
-static void liberty_direct_inputs_gpio(void)
+static void photon_direct_inputs_gpio(void)
 {
 	static uint32_t matirx_inputs_gpio_table[] = {
-		PCOM_GPIO_CFG(LIBERTY_POWER_KEY, 0, GPIO_INPUT, GPIO_PULL_UP,
+		PCOM_GPIO_CFG(PHOTON_POWER_KEY, 0, GPIO_INPUT, GPIO_PULL_UP,
 								GPIO_4MA),
-		PCOM_GPIO_CFG(LIBERTY_GPIO_RESET_BTN_N, 0, GPIO_INPUT,
+		PCOM_GPIO_CFG(PHOTON_GPIO_RESET_BTN_N, 0, GPIO_INPUT,
 						GPIO_NO_PULL, GPIO_2MA),
 	};
 
@@ -113,49 +113,49 @@ static void liberty_direct_inputs_gpio(void)
 }
 
 
-static struct gpio_event_input_info liberty_keypad_power_info = {
+static struct gpio_event_input_info photon_keypad_power_info = {
 	.info.func = gpio_event_input_func,
 	.info.no_suspend = true,
 	.flags = GPIOEDF_PRINT_KEYS,
 	.type = EV_KEY,
 	.debounce_time.tv.nsec = 5 * NSEC_PER_MSEC,
-	.keymap = liberty_keypad_nav_map,
-	.keymap_size = ARRAY_SIZE(liberty_keypad_nav_map),
-	.setup_input_gpio = liberty_direct_inputs_gpio,
+	.keymap = photon_keypad_nav_map,
+	.keymap_size = ARRAY_SIZE(photon_keypad_nav_map),
+	.setup_input_gpio = photon_direct_inputs_gpio,
 };
 
-static struct gpio_event_info *liberty_keypad_info[] = {
-	&liberty_keypad_matrix_info.info,
-	&liberty_keypad_power_info.info,
+static struct gpio_event_info *photon_keypad_info[] = {
+	&photon_keypad_matrix_info.info,
+	&photon_keypad_power_info.info,
 };
 
-int liberty_gpio_event_power(const struct gpio_event_platform_data *pdata, bool on)
+int photon_gpio_event_power(const struct gpio_event_platform_data *pdata, bool on)
 {
        return 0;
 }
 
-static struct gpio_event_platform_data liberty_keypad_data = {
-	.name = "liberty-keypad",
-	.info = liberty_keypad_info,
-	.info_count = ARRAY_SIZE(liberty_keypad_info),
-	.power = liberty_gpio_event_power,
+static struct gpio_event_platform_data photon_keypad_data = {
+	.name = "photon-keypad",
+	.info = photon_keypad_info,
+	.info_count = ARRAY_SIZE(photon_keypad_info),
+	.power = photon_gpio_event_power,
 };
 
-static struct platform_device liberty_keypad_device = {
+static struct platform_device photon_keypad_device = {
 	.name = GPIO_EVENT_DEV_NAME,
 	.id = 0,
 	.dev		= {
-		.platform_data	= &liberty_keypad_data,
+		.platform_data	= &photon_keypad_data,
 	},
 };
 
-static int liberty_reset_keys_up[] = {
+static int photon_reset_keys_up[] = {
 	KEY_VOLUMEUP,
 	0
 };
 
-static struct keyreset_platform_data liberty_reset_keys_pdata = {
-	.keys_up = liberty_reset_keys_up,
+static struct keyreset_platform_data photon_reset_keys_pdata = {
+	.keys_up = photon_reset_keys_up,
 	.keys_down = {
 		KEY_POWER,
 		KEY_VOLUMEDOWN,
@@ -164,12 +164,12 @@ static struct keyreset_platform_data liberty_reset_keys_pdata = {
 	},
 };
 
-static struct platform_device liberty_reset_keys_device = {
+static struct platform_device photon_reset_keys_device = {
 	.name = KEYRESET_NAME,
-	.dev.platform_data = &liberty_reset_keys_pdata,
+	.dev.platform_data = &photon_reset_keys_pdata,
 };
 
-int __init liberty_init_keypad(void)
+int __init photon_init_keypad(void)
 {
 	char *get_cid, *get_carrier, *get_keycaps;
 
@@ -177,9 +177,9 @@ int __init liberty_init_keypad(void)
 	board_get_carrier_tag(&get_carrier);
 	board_get_keycaps_tag(&get_keycaps);
 
-	if (platform_device_register(&liberty_reset_keys_device))
+	if (platform_device_register(&photon_reset_keys_device))
 		printk(KERN_WARNING "%s: register reset key fail\n", __func__);
 
-	return platform_device_register(&liberty_keypad_device);
+	return platform_device_register(&photon_keypad_device);
 }
 

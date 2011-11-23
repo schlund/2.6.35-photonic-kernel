@@ -13,9 +13,9 @@
 
 #include "board-photon.h"
 
-int liberty_wifi_power(int on);
-int liberty_wifi_reset(int on);
-int liberty_wifi_set_carddetect(int on);
+int photon_wifi_power(int on);
+int photon_wifi_reset(int on);
+int photon_wifi_set_carddetect(int on);
 
 #define PREALLOC_WLAN_NUMBER_OF_SECTIONS	4
 #define PREALLOC_WLAN_NUMBER_OF_BUFFERS		160
@@ -42,7 +42,7 @@ static wifi_mem_prealloc_t wifi_mem_array[PREALLOC_WLAN_NUMBER_OF_SECTIONS] = {
 	{ NULL, (WLAN_SECTION_SIZE_3 + PREALLOC_WLAN_SECTION_HEADER) }
 };
 
-static void *liberty_wifi_mem_prealloc(int section, unsigned long size)
+static void *photon_wifi_mem_prealloc(int section, unsigned long size)
 {
 	if (section == PREALLOC_WLAN_NUMBER_OF_SECTIONS)
 		return wlan_static_skb;
@@ -53,7 +53,7 @@ static void *liberty_wifi_mem_prealloc(int section, unsigned long size)
 	return wifi_mem_array[section].mem_ptr;
 }
 
-int __init liberty_init_wifi_mem(void)
+int __init photon_init_wifi_mem(void)
 {
 	int i;
 
@@ -72,11 +72,11 @@ int __init liberty_init_wifi_mem(void)
 	return 0;
 }
 
-static struct resource liberty_wifi_resources[] = {
+static struct resource photon_wifi_resources[] = {
 	[0] = {
 		.name		= "bcm4329_wlan_irq",
-		.start		= MSM_GPIO_TO_INT(LIBERTY_GPIO_WIFI_IRQ1),
-		.end		= MSM_GPIO_TO_INT(LIBERTY_GPIO_WIFI_IRQ1),
+		.start		= MSM_GPIO_TO_INT(PHOTON_GPIO_WIFI_IRQ1),
+		.end		= MSM_GPIO_TO_INT(PHOTON_GPIO_WIFI_IRQ1),
 #ifdef BCM4329_HTC
 		.flags          = IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHLEVEL,
 #else
@@ -85,26 +85,26 @@ static struct resource liberty_wifi_resources[] = {
 	},
 };
 
-static struct bcm_wifi_platform_data liberty_wifi_control = {
-	.set_power      = liberty_wifi_power,
-	.set_reset      = liberty_wifi_reset,
-	.set_carddetect = liberty_wifi_set_carddetect,
-	.mem_prealloc   = liberty_wifi_mem_prealloc,
+static struct bcm_wifi_platform_data photon_wifi_control = {
+	.set_power      = photon_wifi_power,
+	.set_reset      = photon_wifi_reset,
+	.set_carddetect = photon_wifi_set_carddetect,
+	.mem_prealloc   = photon_wifi_mem_prealloc,
 };
 
-static struct platform_device liberty_wifi_device = {
+static struct platform_device photon_wifi_device = {
         .name           = "bcm4329_wlan",
         .id             = 1,
-        .num_resources  = ARRAY_SIZE(liberty_wifi_resources),
-        .resource       = liberty_wifi_resources,
+        .num_resources  = ARRAY_SIZE(photon_wifi_resources),
+        .resource       = photon_wifi_resources,
         .dev            = {
-                .platform_data = &liberty_wifi_control,
+                .platform_data = &photon_wifi_control,
         },
 };
 
 extern unsigned char *get_wifi_nvs_ram(void);
 
-static unsigned liberty_wifi_update_nvs(char *str)
+static unsigned photon_wifi_update_nvs(char *str)
 {
 #define NVS_LEN_OFFSET		0x0C
 #define NVS_DATA_OFFSET		0x40
@@ -132,20 +132,20 @@ static unsigned liberty_wifi_update_nvs(char *str)
 	return 0;
 }
 
-static int __init liberty_wifi_init(void)
+static int __init photon_wifi_init(void)
 {
 	int ret;
 
-	if (!machine_is_liberty())
+	if (!machine_is_photon())
 		return 0;
 
 	printk("%s: start\n", __func__);
-	liberty_wifi_update_nvs("sd_oobonly=1\n");
-	liberty_wifi_update_nvs("btc_params80=0\n");
-	liberty_wifi_update_nvs("btc_params6=30\n");
-	liberty_init_wifi_mem();
-	ret = platform_device_register(&liberty_wifi_device);
+	photon_wifi_update_nvs("sd_oobonly=1\n");
+	photon_wifi_update_nvs("btc_params80=0\n");
+	photon_wifi_update_nvs("btc_params6=30\n");
+	photon_init_wifi_mem();
+	ret = platform_device_register(&photon_wifi_device);
         return ret;
 }
 
-device_initcall(liberty_wifi_init);
+device_initcall(photon_wifi_init);
