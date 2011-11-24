@@ -111,41 +111,7 @@ static int pc_clk_reset(unsigned id, enum clk_reset_action action)
 
 static inline int pc_clk_set_rate(unsigned id, unsigned rate)
 {
-	int r, dump = 0;
-	printk("###CLK_SET_RATE: %d %d\n", id, rate);
-
-	if (id == 21)
-	{
-		uint32_t a1, a2, a3, a4;
-		a1 = readl(MSM_CLK_CTL_BASE + 0xA0);
-		a2 = readl(MSM_CLK_CTL_BASE + 0xA4);
-		a3 = readl(MSM_CLK_CTL_BASE + 0xA8);
-		a4 = readl(MSM_CLK_CTL_BASE + 0xAC);
-		printk("@@@SDC CLK1: [%08X %08X %08X %08X]\n", a1, a2, a3, a4);
-		dump = 1;
-	}
-
-	// Cotulla: fix for photon
-	if (id == SDC1_CLK || id == SDC2_CLK)
-	{
-		if  (rate == 50 * 1000 * 1000)
-			rate = 49152000;
-	}	
-
-	r = msm_proc_comm(PCOM_CLKCTL_RPC_SET_RATE, &id, &rate);
-
-	if (dump)
-	{
-		uint32_t a1, a2, a3, a4;
-		a1 = readl(MSM_CLK_CTL_BASE + 0xA0);
-		a2 = readl(MSM_CLK_CTL_BASE + 0xA4);
-		a3 = readl(MSM_CLK_CTL_BASE + 0xA8);
-		a4 = readl(MSM_CLK_CTL_BASE + 0xAC);
-		printk("@@@SDC CLK2: [%08X %08X %08X %08X]\n", a1, a2, a3, a4);
-	}
-
-	printk("   result: %d\n", r);
-	return r;
+	return msm_proc_comm(PCOM_CLKCTL_RPC_SET_RATE, &id, &rate);
 }
 
 static unsigned ebi1_min_rate = 0;	/* Last EBI1 min rate */

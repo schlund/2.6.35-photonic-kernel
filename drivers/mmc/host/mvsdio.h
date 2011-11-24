@@ -13,7 +13,7 @@
  * Clock rates
  */
 
-#define MVSD_CLOCKRATE_MAX			50000000
+#define MVSD_CLOCKRATE_MAX			49152000
 #define MVSD_BASE_DIV_MAX			0x7ff
 
 
