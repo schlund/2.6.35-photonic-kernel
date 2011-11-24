@@ -102,6 +102,7 @@ static struct map_desc msm_io_desc[] __initdata = {
 	MSM_DEVICE(DMOV),
 	MSM_DEVICE(GPIO1),
 	MSM_DEVICE(GPIO2),
+	MSM_DEVICE(GPIO2E),
 	MSM_DEVICE(CLK_CTL),
 #ifdef CONFIG_ARCH_MSM7X30
 	MSM_DEVICE(CLK_CTL_SH2),
@@ -115,6 +116,7 @@ static struct map_desc msm_io_desc[] __initdata = {
 #endif
 	MSM_DEVICE(AD5),
 	MSM_DEVICE(MDC),
+	MSM_DEVICE(MDP),
 #ifdef CONFIG_ARCH_MSM7X30
 	MSM_DEVICE(ACC),
 	MSM_DEVICE(SAW),
@@ -141,6 +143,20 @@ static struct map_desc msm_io_desc[] __initdata = {
 		.length =   MSM_SHARED_RAM_SIZE,
 		.type =     MT_DEVICE,
 	},
+	{
+		.virtual =  (unsigned long) MSM_RAMCONSOLE_BASE,
+		.pfn =      __phys_to_pfn(MSM_RAMCONSOLE_PHYS),
+		.length =   MSM_RAMCONSOLE_SIZE,
+		.type =     MT_DEVICE,
+	},
+#ifndef CONFIG_PHOTON_IS_NAND_BOOT
+	{
+		.virtual = (unsigned long) MSM_SPLHOOD_BASE,
+		.pfn =		__phys_to_pfn(MSM_SPLHOOD_PHYS),
+		.length =	MSM_SPLHOOD_SIZE,
+		.type =		MT_DEVICE,
+	},
+#endif
 	MSM_DEVICE(SDC2),
 };
 

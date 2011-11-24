@@ -421,7 +421,7 @@ EXPORT_SYMBOL(is_perf_locked);
 
 #ifdef CONFIG_PERFLOCK_BOOT_LOCK
 /* Stop cpufreq and lock cpu, shorten boot time. */
-#define BOOT_LOCK_TIMEOUT	(60 * HZ)
+#define BOOT_LOCK_TIMEOUT	(600 * HZ)
 static struct perf_lock boot_perf_lock;
 
 static void do_expire_boot_lock(struct work_struct *work)

@@ -527,6 +527,8 @@ static struct irq_chip msm_irq_chip = {
 void __init msm_init_irq(void)
 {
 	unsigned n;
+	
+	writel(0xFFFFFFFF, VIC_NO_PEND_VAL);
 
 	/* select level interrupts */
 	msm_irq_write_all_regs(VIC_INT_TYPE0, 0);
@@ -539,6 +541,19 @@ void __init msm_init_irq(void)
 
 	/* disable all INTs */
 	msm_irq_write_all_regs(VIC_INT_EN0, 0);
+	
+	/* clear all INTs */
+	writel(0xFFFFFFFF, VIC_INT_CLEAR0);
+	writel(0xFFFFFFFF, VIC_INT_CLEAR1);
+
+	writel(0, VIC_INT_MASTEREN);
+
+	n = 16;
+	while (n > 0)
+	{
+	    readl(VIC_IRQ_VEC_PEND_RD);
+	    n--;
+	}
 
 	/* don't use 1136 vic */
 	writel(0, VIC_CONFIG);

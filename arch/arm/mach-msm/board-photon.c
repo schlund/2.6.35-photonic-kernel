@@ -86,12 +86,15 @@ void config_photon_camera_off_gpios(void);
 
 void config_photon_proximity_gpios(int on);
 
+#ifndef CONFIG_PHOTON_IS_NAND_BOOT
+void kgsl_boot_reset(void);
+#endif
+
 #ifdef CONFIG_MICROP_COMMON
 void __init photon_microp_init(void);
 #endif
 
-int photon_is_nand_boot(void)
-{
+int photon_is_nand_boot(void) {
 #ifdef CONFIG_PHOTON_IS_NAND_BOOT	
 	return 0;
 #else
@@ -875,6 +878,10 @@ static void __init photon_init(void)
 	char *cid = NULL;
 	struct kobject *properties_kobj;
 
+#ifndef CONFIG_PHOTON_IS_NAND_BOOT	
+	kgsl_boot_reset();
+#endif
+
 	printk("photon_init() revision = 0x%X\n", system_rev);
 	board_get_cid_tag(&cid);
 
@@ -968,6 +975,8 @@ static void __init photon_init(void)
 	photon_init_panel();
 
 	photon_init_keypad();
+	
+	msm_hsusb_set_vbus_state(1);
 }
 
 static void __init photon_fixup(struct machine_desc *desc, struct tag *tags,
@@ -987,6 +996,9 @@ printk(KERN_INFO "fixup: nr_banks = %d\n", mi->nr_banks);
 printk(KERN_INFO "fixup: bank0 start=%08lx, node=%08x, size=%08lx\n", mi->bank[0].start, mi->bank[0].node, mi->bank[0].size);
 printk(KERN_INFO "fixup: bank1 start=%08lx, node=%08x, size=%08lx\n", mi->bank[1].start, mi->bank[1].node, mi->bank[1].size);
 }
+
+int __init htc_fb_console_init(void);
+int __init ram_console_early_init(void);
 
 static void __init photon_map_io(void)
 {

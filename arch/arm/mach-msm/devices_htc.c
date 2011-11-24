@@ -258,6 +258,28 @@ static int kgsl_power(bool on)
        cmd = on ? PCOM_CLKCTL_RPC_RAIL_ENABLE : PCOM_CLKCTL_RPC_RAIL_DISABLE;
        return msm_proc_comm(cmd, &rail_id, NULL);
 }
+
+#ifndef CONFIG_PHOTON_IS_NAND_BOOT
+static void pc_clk_reset(unsigned id)
+{
+	int r;
+	r = msm_proc_comm(PCOM_CLKCTL_RPC_RESET, &id, NULL);
+//	printk("PCOM_CLKCTL_RPC_ENABLE = %d\n", r);
+	return r;
+}
+
+void kgsl_boot_reset(void)
+{
+	pc_clk_reset(8);
+	kgsl_power_rail_mode(0);
+	kgsl_power(false);
+	pc_clk_reset(8);
+	mdelay(150);
+	kgsl_power(true);
+	pc_clk_reset(8);
+}
+#endif
+
 #endif
 
 #endif
