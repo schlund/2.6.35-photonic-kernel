@@ -95,10 +95,10 @@ void __init photon_microp_init(void);
 #endif
 
 int photon_is_nand_boot(void) {
-#ifdef CONFIG_PHOTON_IS_NAND_BOOT	
+#ifndef CONFIG_PHOTON_IS_NAND_BOOT
 	return 0;
 #else
-	return -1;
+	return 1;
 #endif
 }
 
@@ -878,10 +878,11 @@ static void __init photon_init(void)
 	char *cid = NULL;
 	struct kobject *properties_kobj;
 
-#ifndef CONFIG_PHOTON_IS_NAND_BOOT	
+#ifndef CONFIG_PHOTON_IS_NAND_BOOT
 	kgsl_boot_reset();
 #endif
 
+	(photon_is_nand_boot() ? printk("PHOTON BOOT TYPE: NAND\n") : printk("PHOTON BOOT TYPE: SD-CARD\n"));
 	printk("photon_init() revision = 0x%X\n", system_rev);
 	board_get_cid_tag(&cid);
 

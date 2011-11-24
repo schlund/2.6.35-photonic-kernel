@@ -150,5 +150,6 @@
 int __init photon_init_keypad(void);
 int photon_init_mmc(unsigned int sys_rev);
 int __init photon_init_panel(void);
+int photon_is_nand_boot(void);
 #endif /* GUARD */
 
