@@ -1820,3 +1820,9 @@ config SUPPORT_DQ_BATTERY
 	default n
 	help
 		support DQ battery.
+		
+config PHOTON_IS_NAND_BOOT
+	bool "Enables Photon Nand features"
+	default n
+	help
+	  This enables Photon Nand features.
