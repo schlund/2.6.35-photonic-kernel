@@ -156,10 +156,10 @@ void __init l2x0_init(void __iomem *base, __u32 aux_val, __u32 aux_mask)
 	l2x0_base = base;
 
 	/* disable L2X0 */
-	bits = readl(l2x0_base + L2X0_CTRL);
-	bits &= ~0x01;	/* clear bit 0 */
-	writel(bits, l2x0_base + L2X0_CTRL);
-
+	l2x0_cache_sync();
+	l2x0_cache_flush_all();
+	writel(0, l2x0_base + L2X0_CTRL);
+	
 	bits = readl(l2x0_base + L2X0_AUX_CTRL);
 	bits &= aux_mask;
 	bits |= aux_val;
