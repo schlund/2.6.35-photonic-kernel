@@ -44,6 +44,7 @@
 
 #include <mach/msm_smd.h>
 #include "smd_rpcrouter.h"
+#include "board-photon.h"
 
 #define TRACE_R2R_MSG 0
 #define TRACE_R2R_RAW 0
@@ -142,7 +143,9 @@ static int rpcrouter_send_control_msg(union rr_control_msg *msg)
 	unsigned long flags;
 	int need;
 
-	if (!(msg->cmd == RPCROUTER_CTRL_CMD_HELLO) && !initialized) {
+	if ((!(msg->cmd == RPCROUTER_CTRL_CMD_HELLO) && !initialized) 
+	  && (!(msg->cmd == RPCROUTER_CTRL_CMD_BYE) && !photon_is_nand_boot())
+	){
 		printk(KERN_ERR "rpcrouter_send_control_msg(): Warning, "
 		       "router not initialized\n");
 		return -EINVAL;
@@ -399,8 +402,11 @@ static int process_control_msg(union rr_control_msg *msg, int len)
 
 		RR("x HELLO\n");
 		memset(&ctl, 0, sizeof(ctl));
-		ctl.cmd = RPCROUTER_CTRL_CMD_HELLO;
-		rpcrouter_send_control_msg(&ctl);
+		if (photon_is_nand_boot())
+		{
+			ctl.cmd = RPCROUTER_CTRL_CMD_HELLO;
+			rpcrouter_send_control_msg(&ctl);
+		}
 
 		initialized = 1;
 
@@ -1296,6 +1302,24 @@ static int msm_rpcrouter_probe(struct platform_device *pdev)
 		goto fail_remove_devices;
 
 	queue_work(rpcrouter_workqueue, &work_read_data);
+	
+	if (!photon_is_nand_boot())
+	{
+		union rr_control_msg msg = { 0 };
+
+		msg.cmd = RPCROUTER_CTRL_CMD_BYE;
+		rpcrouter_send_control_msg(&msg);
+		msleep(50);
+
+		/* wince rpc init */
+        	msg.cmd = RPCROUTER_CTRL_CMD_HELLO;
+		rpcrouter_send_control_msg(&msg);
+		msleep(50);
+	
+	
+	        process_control_msg(&msg, sizeof(msg));
+		msleep(100);
+	}
 	return 0;
 
  fail_remove_devices:
