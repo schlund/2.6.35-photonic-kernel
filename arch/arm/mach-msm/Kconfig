@@ -986,6 +986,12 @@ config MSM_SERIAL_DEBUGGER_CONSOLE
 	  Enables a console so that printk messages are displayed on
 	  the debugger serial port as the occur.
 
+config FB_CONSOLE
+	default n
+	bool "Console on FB"
+	help
+	  Enables a FB Console at bootup.
+
 config MSM_SMD
 	default y
 	bool "MSM Shared Memory Driver (SMD)"

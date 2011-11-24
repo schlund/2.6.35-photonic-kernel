@@ -90,6 +90,15 @@ void config_photon_proximity_gpios(int on);
 void __init photon_microp_init(void);
 #endif
 
+int photon_is_nand_boot(void)
+{
+#ifdef CONFIG_PHOTON_IS_NAND_BOOT	
+	return 0;
+#else
+	return -1;
+#endif
+}
+
 /* HTC_HEADSET_GPIO Driver */
 static struct htc_headset_gpio_platform_data htc_headset_gpio_data = {
 	.hpin_gpio		= PHOTON_GPIO_35MM_HEADSET_DET,

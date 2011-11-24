@@ -328,8 +328,9 @@ obj-$(CONFIG_MACH_LATTE) += board-latte-mmc.o board-latte-wifi.o board-latte-mic
 obj-$(CONFIG_MACH_LIBERTY) += board-liberty-rfkill.o htc_bluetooth.o
 obj-$(CONFIG_MACH_LIBERTY) += board-liberty.o board-liberty-keypad.o board-liberty-panel.o
 obj-$(CONFIG_MACH_LIBERTY) += board-liberty-mmc.o board-liberty-wifi.o board-liberty-microp.o
-# obj-$(CONFIG_MACH_PHOTON) += htc_fb_console.o
-# obj-$(CONFIG_MACH_PHOTON) += dmesg_log.o
+
+obj-$(CONFIG_FB_CONSOLE) += htc_fb_console.o fonts.o font_pearl_8x8.o 
+obj-$(CONFIG_MACH_PHOTON) += dmesg_log.o
 obj-$(CONFIG_MACH_PHOTON) += board-photon-rfkill.o htc_bluetooth.o
 obj-$(CONFIG_MACH_PHOTON) += board-photon.o board-photon-keypad.o board-photon-panel.o
 obj-$(CONFIG_MACH_PHOTON) += board-photon-mmc.o board-photon-wifi.o board-photon-microp.o
