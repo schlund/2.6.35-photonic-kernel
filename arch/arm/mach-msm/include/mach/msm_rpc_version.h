@@ -126,11 +126,11 @@
 
 #elif (CONFIG_MSM_AMSS_VERSION == 4735)
 #define INT_ADSP                               INT_ADSP_A9_A11
-#define ADSP_DRIVER_NAME                       "rs3000000a:00010001"
-#define RPC_ADSP_RTOS_ATOM_VERS                0x10001
-#define RPC_ADSP_RTOS_MTOA_VERS                0x30002
-#define AUDMGR_VERS                            0x20002
-#define AUDMGR_CB_VERS                         0x20002
+#define ADSP_DRIVER_NAME                       "rs3000000a:00000000"
+#define RPC_ADSP_RTOS_ATOM_VERS                0x00000
+#define RPC_ADSP_RTOS_MTOA_VERS                0x00000
+#define AUDMGR_VERS                            0x30001
+#define AUDMGR_CB_VERS                         0x30001
 #define DOG_KEEPALIVE_VERS                     0x10001
 #define RPC_DOG_KEEPALIVE_BEACON               2
 #define TIME_REMOTE_MTOA_VERS                  0x10002
