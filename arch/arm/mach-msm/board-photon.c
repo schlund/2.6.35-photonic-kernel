@@ -965,9 +965,18 @@ static void __init photon_fixup(struct machine_desc *desc, struct tag *tags,
                                char **cmdline, struct meminfo *mi)
 {
 	mi->nr_banks=1;
-	mi->bank[0].start = MSM_LINUX_BASE;
-	mi->bank[0].node = PHYS_TO_NID(MSM_LINUX_BASE);
-	mi->bank[0].size = MSM_LINUX_SIZE;
+	mi->bank[0].start = MSM_PHOTON_LINUX1_BASE;
+	mi->bank[0].node = PHYS_TO_NID(mi->bank[0].start);
+	mi->bank[0].size = MSM_PHOTON_LINUX1_SIZE;
+
+	mi->nr_banks++;
+	mi->bank[1].start = MSM_PHOTON_LINUX2_BASE;
+	mi->bank[1].node = PHYS_TO_NID(mi->bank[1].start);
+	mi->bank[1].size = MSM_PHOTON_LINUX2_SIZE;
+
+printk(KERN_INFO "fixup: nr_banks = %d\n", mi->nr_banks);
+printk(KERN_INFO "fixup: bank0 start=%08lx, node=%08x, size=%08lx\n", mi->bank[0].start, mi->bank[0].node, mi->bank[0].size);
+printk(KERN_INFO "fixup: bank1 start=%08lx, node=%08x, size=%08lx\n", mi->bank[1].start, mi->bank[1].node, mi->bank[1].size);
 }
 
 static void __init photon_map_io(void)
