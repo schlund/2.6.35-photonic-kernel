@@ -102,36 +102,6 @@ static struct platform_device photon_wifi_device = {
         },
 };
 
-extern unsigned char *get_wifi_nvs_ram(void);
-
-static unsigned photon_wifi_update_nvs(char *str)
-{
-#define NVS_LEN_OFFSET		0x0C
-#define NVS_DATA_OFFSET		0x40
-	unsigned char *ptr;
-	unsigned len;
-
-	if (!str)
-		return -EINVAL;
-	ptr = get_wifi_nvs_ram();
-	/* Size in format LE assumed */
-	memcpy(&len, ptr + NVS_LEN_OFFSET, sizeof(len));
-
-	/* the last bye in NVRAM is 0, trim it */
-	if (ptr[NVS_DATA_OFFSET + len -1] == 0)
-		len -= 1;
-
-	if (ptr[NVS_DATA_OFFSET + len -1] != '\n') {
-		len += 1;
-		ptr[NVS_DATA_OFFSET + len -1] = '\n';
-	}
-
-	strcpy(ptr + NVS_DATA_OFFSET + len, str);
-	len += strlen(str);
-	memcpy(ptr + NVS_LEN_OFFSET, &len, sizeof(len));
-	return 0;
-}
-
 static int __init photon_wifi_init(void)
 {
 	int ret;
@@ -140,9 +110,6 @@ static int __init photon_wifi_init(void)
 		return 0;
 
 	printk("%s: start\n", __func__);
-	photon_wifi_update_nvs("sd_oobonly=1\n");
-	photon_wifi_update_nvs("btc_params80=0\n");
-	photon_wifi_update_nvs("btc_params6=30\n");
 	photon_init_wifi_mem();
 	ret = platform_device_register(&photon_wifi_device);
         return ret;
