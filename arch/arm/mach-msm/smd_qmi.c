@@ -322,10 +322,10 @@ static void qmi_process_unicast_wds_msg(struct qmi_ctxt *ctxt,
 		break;
 	case 0x0020:
 		if (qmi_get_status(msg, &err)) {
-			printk(KERN_INFO
+			printk(KERN_ERR
 			       "qmi: wds: network start failed (%04x)\n", err);
 			//++Make pdp state always be sent to QMI channel when activating PDP context fails
-			printk(KERN_INFO
+			printk(KERN_ERR
 					"qmi: wds: Make pdp state always be sent to QMI channel when activating PDP context fails .\n");
 			ctxt->state = STATE_OFFLINE;
 			ctxt->state_dirty = 1;
@@ -820,7 +820,7 @@ static struct file_operations qmi_fops = {
 };
 
 static struct qmi_ctxt qmi_device0 = {
-	.ch_name = "SMD_DATA5_CNTL",
+	.ch_name = "SMD_DATA2",
 	.misc = {
 		.minor = MISC_DYNAMIC_MINOR,
 		.name = "qmi0",
@@ -828,18 +828,10 @@ static struct qmi_ctxt qmi_device0 = {
 	}
 };
 static struct qmi_ctxt qmi_device1 = {
-	.ch_name = "SMD_DATA6_CNTL",
+	.ch_name = "SMD_DATA3",
 	.misc = {
 		.minor = MISC_DYNAMIC_MINOR,
 		.name = "qmi1",
-		.fops = &qmi_fops,
-	}
-};
-static struct qmi_ctxt qmi_device2 = {
-	.ch_name = "SMD_DATA7_CNTL",
-	.misc = {
-		.minor = MISC_DYNAMIC_MINOR,
-		.name = "qmi2",
 		.fops = &qmi_fops,
 	}
 };
@@ -850,8 +842,6 @@ static struct qmi_ctxt *qmi_minor_to_ctxt(unsigned n)
 		return &qmi_device0;
 	if (n == qmi_device1.misc.minor)
 		return &qmi_device1;
-	if (n == qmi_device2.misc.minor)
-		return &qmi_device2;
 	return 0;
 }
 
@@ -865,13 +855,10 @@ static int __init qmi_init(void)
 
 	qmi_ctxt_init(&qmi_device0, 0);
 	qmi_ctxt_init(&qmi_device1, 1);
-	qmi_ctxt_init(&qmi_device2, 2);
 
 	ret = misc_register(&qmi_device0.misc);
 	if (ret == 0)
 		ret = misc_register(&qmi_device1.misc);
-	if (ret == 0)
-		ret = misc_register(&qmi_device2.misc);
 	return ret;
 }
 
