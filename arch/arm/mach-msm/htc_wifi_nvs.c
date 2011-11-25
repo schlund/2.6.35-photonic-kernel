@@ -5,7 +5,6 @@
  *
  * Copyright (C) 2008 Google, Inc.
  * Author: Dmitry Shmidt <dimitrysh@google.com>
- * Changed for nand read for Leo by Markinus
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
