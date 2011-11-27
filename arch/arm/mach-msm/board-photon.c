@@ -60,7 +60,8 @@
 
 #include <mach/atmega_microp.h>
 /* #include <mach/msm_tssc.h> */
-#include <mach/htc_battery.h>
+#include <mach/htc_battery_wince.h>
+#include "proc_comm_wince.h"
 #include <mach/htc_pwrsink.h>
 #include <mach/perflock.h>
 #include <mach/drv_callback.h>
@@ -146,18 +147,20 @@ static struct htc_headset_mgr_platform_data htc_headset_mgr_data = {
 	.headset_devices	= headset_devices,
 };
 
-static struct htc_battery_platform_data htc_battery_pdev_data = {
-	.guage_driver = GUAGE_MODEM,
-	.charger = LINEAR_CHARGER,
-	.m2a_cable_detect = 1,
-};
-
-static struct platform_device htc_battery_pdev = {
+/* WINCE Battery Driver */
+struct platform_device msm_device_htc_battery_wince = {
 	.name = "htc_battery",
 	.id = -1,
-	.dev	= {
-		.platform_data = &htc_battery_pdev_data,
-	},
+};
+
+static smem_batt_t htcphoton_htc_battery_wince_pdata = {
+	.gpio_battery_detect = 0, 
+	.gpio_ac_detect = 0,
+	.gpio_charger_enable = PHOTON_GPIO_CHARGE_EN_N,
+	.gpio_charger_fast_dis = PHOTON_FAST_CHARGER_DIS, 
+	.gpio_charger_fast_en = PHOTON_FAST_CHARGER_EN,
+	.smem_offset = 0xfc110,
+	.smem_field_size = 2,
 };
 
 static int capella_cm3602_power(int pwr_device, uint8_t enable);
@@ -276,10 +279,13 @@ static void photon_phy_reset(void)
 }
 
 #ifdef CONFIG_USB_ANDROID
+static void usb_connected(int on) {/*printk("OLD%s notifier, online=%d\n",__func__,on);*/}
+
 static struct msm_hsusb_platform_data msm_hsusb_pdata = {
 	.phy_init_seq		= photon_phy_init_seq,
 	.phy_reset		= photon_phy_reset,
 	.usb_id_pin_gpio =  PHOTON_GPIO_USB_ID_PIN,
+	.usb_connected = usb_connected,
 };
 
 static struct usb_mass_storage_platform_data mass_storage_pdata = {
@@ -661,7 +667,7 @@ static struct platform_device *devices[] __initdata = {
 #ifdef CONFIG_SERIAL_MSM_HS_PURE_ANDROID
         &bcm_bt_lpm_device,
 #endif
-	&htc_battery_pdev,
+	&msm_device_htc_battery_wince,
 	&msm_camera_sensor_s5k4e1gx,
 	&photon_rfkill,
 #ifdef CONFIG_HTC_PWRSINK
@@ -907,6 +913,10 @@ static void __init photon_init(void)
 
 	msm_acpu_clock_init(&photon_clock_data);
 	perflock_init(&photon_perflock_data);
+	
+	/* Battery for Photon */
+	msm_proc_comm_wince_init();
+	msm_device_htc_battery_wince.dev.platform_data = &htcphoton_htc_battery_wince_pdata;
 
 #if defined(CONFIG_MSM_SERIAL_DEBUGGER)
 	if (!opt_disable_uart3)

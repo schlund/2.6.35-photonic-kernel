@@ -66,6 +66,11 @@
 #define PHOTON_GPIO_UP_INT_N            (39)
 #define PHOTON_GPIO_CAM_I2C_SCL         (49)
 
+/* Battery */
+#define PHOTON_GPIO_CHARGE_EN_N			(23) //standard charger
+#define PHOTON_FAST_CHARGER_DIS			(17) //disabled when AC cable is plugged
+#define PHOTON_FAST_CHARGER_EN			(32) //enabled when AC cable is plugged
+
 /* WLAN SD data */
 #define PHOTON_GPIO_SD_D3               (51)
 #define PHOTON_GPIO_SD_D2               (52)

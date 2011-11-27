@@ -30,9 +30,6 @@
 #include <linux/pm_qos_params.h>
 #include "mach/socinfo.h"
 
-#include <mach/msm_iomap.h>
-#include <linux/io.h>
-
 #include "clock.h"
 #include "proc_comm.h"
 

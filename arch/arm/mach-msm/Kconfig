@@ -706,9 +706,14 @@ config TROUT_BATTCHG
 	bool "Trout battery / charger driver"
 
 config HTC_BATTCHG
-	depends on MSM_ONCRPCROUTER && POWER_SUPPLY
+	depends on MSM_ONCRPCROUTER && POWER_SUPPLY && !HTC_BATTCHG_WINCE
 	default n
 	bool "HTC battery / charger driver"
+
+config HTC_BATTCHG_WINCE
+	depends on MSM_ONCRPCROUTER && POWER_SUPPLY
+	default n
+	bool "HTC Photon battery support (DEX & SMEM)"
 
 config HTC_BATT_CORE
 	depends on POWER_SUPPLY
