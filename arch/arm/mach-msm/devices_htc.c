@@ -260,7 +260,7 @@ static int kgsl_power(bool on)
 }
 
 #ifndef CONFIG_PHOTON_IS_NAND_BOOT
-static void pc_clk_reset(unsigned id)
+static int pc_clk_reset(unsigned id)
 {
 	int r;
 	r = msm_proc_comm(PCOM_CLKCTL_RPC_RESET, &id, NULL);
