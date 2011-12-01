@@ -202,9 +202,11 @@ static struct microp_led_config led_config[] = {
 		.type = LED_RGB,
 	},
 	{
-		.name   = "button-backlight",
-		.type = LED_GPO,
-		.mask_w = {0x00, 0x00, 0x08},
+		.name = "button-backlight",
+		.type = LED_PWM,
+		.led_pin = 1 << 5,
+		.init_value = 1,
+		.fade_time = 10,
 	},
 };
 
