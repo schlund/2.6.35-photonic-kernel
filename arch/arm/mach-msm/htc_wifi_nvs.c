@@ -94,6 +94,7 @@ static int parse_tag_msm_wifi(void)
 
 static int parse_tag_msm_wifi_from_spl(void)
 {
+#ifndef CONFIG_PHOTON_IS_NAND_BOOT
 	int n;
 	uint32_t id[10];
 	uint32_t id_base = 0xFC028;
@@ -101,6 +102,7 @@ static int parse_tag_msm_wifi_from_spl(void)
 		id[n] = 0xff & readl(MSM_SPLHOOD_BASE + id_base + n);
 	sprintf(nvs_mac_addr, "macaddr=%2x:%2x:%2x:%2x:%2x:%2x\n", id[0], id[1], id[2], id[3], id[4], id[5]);
 	pr_info("[WIFI] Device Real Wifi Mac Address: %s\n", nvs_mac_addr);
+#endif
 	return 0;
 }
 
