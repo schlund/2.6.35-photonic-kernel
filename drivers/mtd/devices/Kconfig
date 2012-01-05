@@ -59,6 +59,15 @@ config MTD_MSM_NAND
 	help
 	  Support for some NAND chips connected to the MSM NAND controller.
 
+config MTD_MSM_NAND_WINCE
+	tristate "MSM NAND Device on WinCE devices"
+	depends on MTD && ARCH_MSM && !MTD_MSM_NAND
+	select MTD_NAND_IDS
+	default y
+	help
+	  Support for some NAND chips connected to the MSM NAND controller
+	  on HTC WinCE devices.
+
 config MTD_DATAFLASH
 	tristate "Support for AT45xxx DataFlash"
 	depends on SPI_MASTER && EXPERIMENTAL
