@@ -1273,6 +1273,7 @@ int msm_rpcrouter_close(void)
 static int msm_rpcrouter_probe(struct platform_device *pdev)
 {
 	int rc;
+	union rr_control_msg msg = { 0 };
 
 	/* Initialize what we need to start processing */
 	INIT_LIST_HEAD(&local_endpoints);
@@ -1297,8 +1298,6 @@ static int msm_rpcrouter_probe(struct platform_device *pdev)
 		goto fail_remove_devices;
 
 	queue_work(rpcrouter_workqueue, &work_read_data);
-	
-	union rr_control_msg msg = { 0 };
 
 	msg.cmd = RPCROUTER_CTRL_CMD_BYE;
 	rpcrouter_send_control_msg(&msg);
