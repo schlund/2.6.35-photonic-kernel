@@ -833,8 +833,6 @@ static struct platform_suspend_ops msm_pm_ops = {
 	.valid		= suspend_valid_only_mem,
 };
 
-static uint32_t restart_reason = 0x776655AA;
-
 static int msm_wakeup_after;	/* default, no wakeup by alarm */
 static int msm_power_wakeup_after(const char *val, struct kernel_param *kp)
 {
@@ -897,6 +895,25 @@ static void msm_pm_power_off(void)
 	for (;;) ;
 }
 
+enum msm_reboot_reason {
+	MSM_BOOTLOADER = 0x77665500,
+	MSM_RECOVERY = 0x77665502,
+	MSM_ERASEFLASH = 0x776655EF,
+	MSM_OEM = 0x6f656d00,
+	MSM_FORCE_HARD = 0x776655AA,
+	MSM_DEFAULT = 0x77665501
+};
+
+enum msm_wince_lk_reboot_reason {
+	MSM_LK_FASTBOOT = 0x46414254,
+	MSM_LK_RECOVERY = 0x52435652,
+	MSM_LK_TAG = 0x504f4f50
+};
+
+#define MSM_WINCE_LK_BOOT_ADDR 0x8dfff0
+
+static uint32_t restart_reason = MSM_FORCE_HARD;
+
 static bool console_flushed;
 
 void msm_pm_flush_console(void)
@@ -924,32 +941,32 @@ void msm_pm_flush_console(void)
 
 static void msm_pm_restart(char str, const char *cmd)
 {
+	volatile void *reset_tag;
+	volatile void *reset_off;
 	msm_pm_flush_console();
 
-	/*  always reboot device through proc comm */
-	if (restart_reason == 0x6f656d99)
-		msm_proc_comm(PCOM_RESET_CHIP_IMM, &restart_reason, 0);
-	else
-		msm_proc_comm(PCOM_RESET_CHIP, &restart_reason, 0);
-
-#if defined(CONFIG_MSM_RMT_STORAGE_SERVER) || defined(CONFIG_MSM_RMT_STORAGE_CLIENT)
-	printk(KERN_INFO "from %s\r\n", __func__);
-	wait_rmt_final_call_back(10);
-	printk(KERN_INFO "back %s\r\n", __func__);
-	/* wait 2 seconds to let radio reset device after the final EFS sync*/
-	mdelay(2000);
-#else
-	/* In case Radio is dead, reset device after notify Radio 5 seconds */
-	mdelay(5000);
-#endif
-
-	/* hard reboot if possible */
-	if (msm_hw_reset_hook) {
-		printk(KERN_INFO "%s : Do HW_RESET by APP not by RADIO\r\n", __func__);
-		msm_hw_reset_hook();
+	switch(restart_reason) {
+		case MSM_RECOVERY:
+			restart_reason = MSM_LK_RECOVERY;
+			break;
+		case MSM_BOOTLOADER:
+			restart_reason = MSM_LK_FASTBOOT;
+			break;
+		default:
+			restart_reason = 0;
+	};
+	reset_tag = ioremap(MSM_WINCE_LK_BOOT_ADDR & ~(PAGE_SIZE - 1), PAGE_SIZE);
+	if (reset_tag) {
+		reset_off = reset_tag + (MSM_WINCE_LK_BOOT_ADDR & (PAGE_SIZE - 1));
+		writel(restart_reason, reset_off);
+		writel(restart_reason ^ MSM_LK_TAG, reset_off + 4);
+		iounmap(reset_tag);
 	}
-
-	for (;;) ;
+	if (msm_hw_reset_hook)
+		msm_hw_reset_hook();
+		
+	mdelay(50);
+	for (;;);
 }
 
 static int msm_reboot_call(struct notifier_block *this, unsigned long code, void *_cmd)
@@ -957,18 +974,18 @@ static int msm_reboot_call(struct notifier_block *this, unsigned long code, void
 	if((code == SYS_RESTART) && _cmd) {
 		char *cmd = _cmd;
 		if (!strcmp(cmd, "bootloader")) {
-			restart_reason = 0x77665500;
+			restart_reason = MSM_BOOTLOADER;
 		} else if (!strcmp(cmd, "recovery")) {
-			restart_reason = 0x77665502;
+			restart_reason = MSM_RECOVERY;
 		} else if (!strcmp(cmd, "eraseflash")) {
-			restart_reason = 0x776655EF;
+			restart_reason = MSM_ERASEFLASH;
 		} else if (!strncmp(cmd, "oem-", 4)) {
 			unsigned code = simple_strtoul(cmd + 4, 0, 16) & 0xff;
-			restart_reason = 0x6f656d00 | code;
+			restart_reason = MSM_OEM | code;
 		} else if (!strcmp(cmd, "force-hard")) {
-			restart_reason = 0x776655AA;
+			restart_reason = MSM_FORCE_HARD;
 		} else {
-			restart_reason = 0x77665501;
+			restart_reason = MSM_DEFAULT;
 		}
 	}
 	return NOTIFY_DONE;
