@@ -95,14 +95,6 @@ void kgsl_boot_reset(void);
 void __init photon_microp_init(void);
 #endif
 
-int photon_is_nand_boot(void) {
-#ifndef CONFIG_PHOTON_IS_NAND_BOOT
-	return 0;
-#else
-	return 1;
-#endif
-}
-
 /* HTC_HEADSET_GPIO Driver */
 static struct htc_headset_gpio_platform_data htc_headset_gpio_data = {
 	.hpin_gpio		= PHOTON_GPIO_35MM_HEADSET_DET,
@@ -888,9 +880,11 @@ static void __init photon_init(void)
 
 #ifndef CONFIG_PHOTON_IS_NAND_BOOT
 	kgsl_boot_reset();
+	printk("PHOTON BOOT TYPE: SD-CARD\n");
+#else
+	printk("PHOTON BOOT TYPE: NAND\n");
 #endif
 
-	(photon_is_nand_boot() ? printk("PHOTON BOOT TYPE: NAND\n") : printk("PHOTON BOOT TYPE: SD-CARD\n"));
 	printk("photon_init() revision = 0x%X\n", system_rev);
 	board_get_cid_tag(&cid);
 
