@@ -22,6 +22,10 @@
 #include <linux/rtc.h>
 #include <linux/slab.h>
 
+#include "gpio_chip.h"
+#include "proc_comm_wince.h"
+#include "board-photon.h"
+
 #include <mach/htc_headset_mgr.h>
 
 #define DRIVER_NAME "HS_MGR"
@@ -271,6 +275,37 @@ void hs_set_mic_select(int state)
 
 	if (hs_mgr_notifier.mic_select)
 		hs_mgr_notifier.mic_select(state);
+}
+
+/** r0bin: fix for photon headset */
+/** Turn headset amp on/off */
+void photon_headset_amp(int enabled)
+{
+	if (enabled)
+	{
+		/* Power up headphone amp */
+		gpio_configure(PHOTON_GPIO_HEADSET_AMP, GPIOF_DRIVE_OUTPUT | GPIOF_OUTPUT_HIGH);
+		msleep(30);
+		gpio_set_value(PHOTON_GPIO_HEADSET_AMP, 1);
+	} else {
+		/* Power down headphone amp */
+		gpio_configure(PHOTON_GPIO_HEADSET_AMP, GPIOF_DRIVE_OUTPUT | GPIOF_OUTPUT_LOW);
+		msleep(30);
+		gpio_set_value(PHOTON_GPIO_HEADSET_AMP, 0);
+	}
+}
+/** send DEX to enable headset */
+void photon_headset_enable(int enabled)
+{
+	struct msm_dex_command dex;
+	dex.cmd=PCOM_UPDATE_AUDIO;
+	dex.has_data=1;
+	printk("%s, enable=%d\n",__func__,enabled);
+	/* WinMo sends two DEX calls, wether headset plugs or unplugs */
+	dex.data=0x1;
+	msm_proc_comm_wince(&dex,0);
+	dex.data=0x80;
+	msm_proc_comm_wince(&dex,0);
 }
 
 static int get_mic_status(void)
@@ -1322,6 +1357,8 @@ static int htc_headset_mgr_probe(struct platform_device *pdev)
 
 	headset_mgr_init();
 	hs_notify_driver_ready(DRIVER_NAME);
+	
+	gpio_request(PHOTON_GPIO_HEADSET_AMP,"headset_amp_en");
 
 	HS_LOG("--------------------");
 

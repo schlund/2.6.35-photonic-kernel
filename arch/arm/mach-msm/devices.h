@@ -125,4 +125,5 @@ extern int tp_type;
 extern struct platform_device msm_device_ssbi_pmic;
 #endif
 
+extern struct platform_device acoustic_device;
 #endif

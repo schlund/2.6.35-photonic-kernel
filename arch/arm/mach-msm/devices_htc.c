@@ -39,6 +39,7 @@
 #include <linux/msm_kgsl.h>
 #include <mach/dal_axi.h>
 #include "proc_comm.h"
+#include <mach/htc_acoustic_wince.h>
 
 static char *df_serialno = "000000000000";
 static char *board_sn;
@@ -851,3 +852,42 @@ int unregister_notifier_by_psensor(struct notifier_block *nb)
 	return blocking_notifier_chain_unregister(&psensor_notifier_list, nb);
 }
 
+/******************************************************************************
+ * Acoustic driver settings
+ ******************************************************************************/
+static struct msm_rpc_endpoint *mic_endpoint = NULL;
+
+void amss_4735_mic_bias_callback(bool on)
+{
+	  struct {
+			  struct rpc_request_hdr hdr;
+			  uint32_t data;
+	  } req;
+
+	  if (!mic_endpoint)
+			  mic_endpoint = msm_rpc_connect(0x30000061, 0x10001, 0);
+	  if (!mic_endpoint) {
+			  printk(KERN_ERR "%s: couldn't open rpc endpoint\n", __func__);
+			  return;
+	  }
+	  req.data=cpu_to_be32(on);
+	  msm_rpc_call(mic_endpoint, 0x1c, &req, sizeof(req), 5 * HZ);
+}
+
+struct htc_acoustic_wce_amss_data amss_4735_acoustic_data = {
+	.volume_table = (MSM_SHARED_RAM_BASE+0x71aa8),
+	.wb_volume_table = (MSM_SHARED_RAM_BASE+0x71c42),
+	.ce_table = (MSM_SHARED_RAM_BASE+0x7325c),
+	.adie_table = (MSM_SHARED_RAM_BASE+0x7265c),
+	.codec_table = (MSM_SHARED_RAM_BASE+0x71ddc),
+	.voc_cal_field_size = 17,
+	.mic_bias_callback = amss_4735_mic_bias_callback,
+};
+
+struct platform_device acoustic_device = {
+	.name = "htc_acoustic",
+	.id = -1,
+	.dev = {
+		.platform_data = &amss_4735_acoustic_data,
+		},
+};

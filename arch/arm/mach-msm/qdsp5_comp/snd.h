@@ -19,6 +19,8 @@
 #define _SND_H_
 
 #include <mach/msm_rpc_version.h>
+#include <linux/msm_audio.h>
+#include <mach/board.h>
 
 #define SND_CB_FUNC_PTR_TYPE_PROC 1
 #define VOC_PCM_CLIENT_OUTPUT_PTR 2
@@ -34,6 +36,7 @@ struct snd_ctxt {
 	int opened;
 
 	struct msm_rpc_endpoint *ept;
+	struct msm_snd_endpoints *snd_epts;
 	struct task_struct *task;
 	int inited;
 };
@@ -47,12 +50,12 @@ struct snd_ctxt {
 #define RPC_REQUEST_HDR_SZ (sizeof(struct rpc_request_hdr))
 #define RPC_REPLY_HDR_SZ   (sizeof(uint32_t) * 3)
 #define RPC_REPLY_SZ       (sizeof(uint32_t) * 6)
-
+/*
 #define SND_IOCTL_MAGIC 's'
 
 #define SND_SET_DEVICE		_IOW(SND_IOCTL_MAGIC, 2, unsigned)
 #define SND_SET_VOLUME		_IOW(SND_IOCTL_MAGIC, 3, unsigned)
-
+*/
 struct snd_device_config {
 	uint32_t device;
 	uint32_t ear_mute;

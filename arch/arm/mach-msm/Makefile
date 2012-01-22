@@ -147,6 +147,7 @@ obj-$(CONFIG_CPU_FREQ) += cpufreq.o
 
 ifndef CONFIG_ARCH_MSM8X60
 obj-$(CONFIG_HTC_ACOUSTIC) += htc_acoustic.o
+obj-$(CONFIG_HTC_ACOUSTIC_WINCE) += htc_acoustic_wince.o
 endif
 
 obj-$(CONFIG_HTC_ACOUSTIC_QSD) += htc_acoustic_qsd.o

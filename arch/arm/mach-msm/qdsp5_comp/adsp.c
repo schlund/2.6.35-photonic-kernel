@@ -80,43 +80,8 @@ void adsp_set_image(struct adsp_info *info, uint32_t image)
  * module_entries table.If module_id is available returns `0`.
  * If module_id is not available returns `-ENXIO`.
  */
-static int32_t adsp_validate_module(uint32_t module_id)
-{
-	uint32_t	*ptr;
-	uint32_t	module_index;
-	uint32_t	num_mod_entries;
 
-	ptr = adsp_info.init_info_ptr->module_entries;
-	num_mod_entries = adsp_info.init_info_ptr->module_table_size;
-
-	for (module_index = 0; module_index < num_mod_entries; module_index++)
-		if (module_id == ptr[module_index])
-			return 0;
-
-	return -ENXIO;
-}
-
-#if defined(CONFIG_ARCH_MSM7227)
-static int32_t adsp_validate_queue(uint32_t mod_id, unsigned q_idx,
-							uint32_t size)
-{
-	int32_t i;
-	struct adsp_rtos_mp_mtoa_init_info_type	*sptr;
-
-	sptr = adsp_info.init_info_ptr;
-	for (i = 0; i < sptr->mod_to_q_entries; i++)
-		if (mod_id == sptr->mod_to_q_tbl[i].module)
-			if (q_idx == sptr->mod_to_q_tbl[i].q_type) {
-				if (size <= sptr->mod_to_q_tbl[i].q_max_len)
-					return 0;
-				pr_info("adsp: q_idx: %d is not a valid queue \
-					 for module %x\n", q_idx, mod_id);
-				return -EINVAL;
-			}
-	pr_info("adsp: cmd_buf size is more than allowed size\n");
-	return -EINVAL;
-}
-#endif
+static inline int32_t adsp_validate_module(uint32_t module_id) { return 0; }
 
 uint32_t adsp_get_module(struct adsp_info *info, uint32_t task)
 {
@@ -219,63 +184,11 @@ static int adsp_rpc_init(struct msm_adsp_module *adsp_module)
 	return 0;
 }
 
-/*
- * Send RPC_ADSP_RTOS_CMD_GET_INIT_INFO cmd to ARM9 and get
- * queue offsets and module entries (init info) as part of the event.
- */
-static void  msm_get_init_info(void)
-{
-	int rc;
-	struct rpc_adsp_rtos_app_to_modem_args_t rpc_req;
-	struct rpc_reply_hdr rpc_rsp;
-
-	adsp_info.init_info_rpc_client = msm_rpc_connect(
-		rpc_adsp_rtos_atom_prog,
-		rpc_adsp_rtos_atom_vers,
-		MSM_RPC_UNINTERRUPTIBLE | MSM_RPC_ENABLE_RECEIVE);
-	if (IS_ERR(adsp_info.init_info_rpc_client)) {
-		rc = PTR_ERR(adsp_info.init_info_rpc_client);
-		adsp_info.init_info_rpc_client = 0;
-		pr_err("adsp: could not open rpc client: %d\n", rc);
-		return;
-	}
-
-
-	rpc_req.gotit = cpu_to_be32(1);
-	rpc_req.cmd = cpu_to_be32(RPC_ADSP_RTOS_CMD_GET_INIT_INFO);
-	rpc_req.proc_id = cpu_to_be32(RPC_ADSP_RTOS_PROC_APPS);
-	rpc_req.module = 0;
-
-	rc = msm_rpc_call_reply(adsp_info.init_info_rpc_client,
-					RPC_ADSP_RTOS_APP_TO_MODEM_PROC,
-					&rpc_req, sizeof(rpc_req),
-					&rpc_rsp, sizeof(rpc_rsp),
-					5 * HZ);
-
-	if (rc < 0)
-		pr_err("adsp: could not send RPC request: %d\n", rc);
-}
-
-
 int msm_adsp_get(const char *name, struct msm_adsp_module **out,
 		 struct msm_adsp_ops *ops, void *driver_data)
 {
 	struct msm_adsp_module *module;
 	int rc = 0;
-	static uint32_t init_info_cmd_sent;
-
-	if (!init_info_cmd_sent) {
-		init_waitqueue_head(&adsp_info.init_info_wait);
-		msm_get_init_info();
-		rc = wait_event_timeout(adsp_info.init_info_wait,
-			adsp_info.init_info_state == ADSP_STATE_INIT_INFO,
-			5 * HZ);
-		if (!rc) {
-			pr_info("adsp: INIT_INFO failed\n");
-			return -ETIMEDOUT;
-		}
-		init_info_cmd_sent++;
-	}
 
 	module = find_adsp_module_by_name(&adsp_info, name);
 	if (!module)
@@ -416,16 +329,7 @@ int __msm_adsp_write(struct msm_adsp_module *module, unsigned dsp_queue_addr,
 			module->name, module->id);
 		return -ENXIO;
 	}
-#if defined(CONFIG_ARCH_MSM7227)
-	if (dsp_queue_addr >= QDSP_MAX_NUM_QUEUES) {
-		pr_info("adsp: Invalid Queue Index: %d\n", dsp_queue_addr);
-		return -ENXIO;
-	}
-	if (adsp_validate_queue(module->id, dsp_queue_addr, cmd_size)) {
-		spin_unlock_irqrestore(&adsp_write_lock, flags);
-		return -EINVAL;
-	}
-#endif
+
 	dsp_q_addr = adsp_get_queue_offset(info, dsp_queue_addr);
 	dsp_q_addr &= ADSP_RTOS_WRITE_CTRL_WORD_DSP_ADDR_M;
 
@@ -758,12 +662,9 @@ static int handle_adsp_rtos_mtoa(struct rpc_request_hdr *req)
 					     req->xid,
 					     RPC_ACCEPTSTAT_SUCCESS);
 		break;
-#if defined(CONFIG_ARCH_MSM7227)
-	case RPC_ADSP_RTOS_MODEM_TO_APP_INIT_INFO_PROC:
-	case RPC_ADSP_RTOS_MODEM_TO_APP_EVENT_INFO_PROC:
-#else
+
 	case RPC_ADSP_RTOS_MODEM_TO_APP_PROC:
-#endif
+
 		handle_adsp_rtos_mtoa_app(req);
 		break;
 	default:

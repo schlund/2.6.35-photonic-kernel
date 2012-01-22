@@ -119,8 +119,8 @@ struct adsp_info {
 #define RPC_ADSP_RTOS_MTOA_PROG 0x3000000b
 #define RPC_ADSP_RTOS_ATOM_NULL_PROC 0
 #define RPC_ADSP_RTOS_MTOA_NULL_PROC 0
-#define RPC_ADSP_RTOS_APP_TO_MODEM_PROC 2
-#define RPC_ADSP_RTOS_MODEM_TO_APP_PROC 2
+#define RPC_ADSP_RTOS_APP_TO_MODEM_PROC 1
+#define RPC_ADSP_RTOS_MODEM_TO_APP_PROC 1
 #define RPC_ADSP_RTOS_MODEM_TO_APP_EVENT_INFO_PROC 3
 #define RPC_ADSP_RTOS_MODEM_TO_APP_INIT_INFO_PROC 4
 
@@ -287,59 +287,6 @@ extern int adsp_init_info(struct adsp_info *info);
 
 /* Value to indicate that a queue is not defined for a particular image */
 #define QDSP_RTOS_NO_QUEUE  0xfffffffe
-
-/* Firmware modules */
-#define QDSP_MODULE_KERNEL                  0x0106dd4e
-#define QDSP_MODULE_AFETASK                 0x0106dd6f
-#define QDSP_MODULE_AUDPLAY0TASK            0x0106dd70
-#define QDSP_MODULE_AUDPLAY1TASK            0x0106dd71
-#define QDSP_MODULE_AUDPPTASK               0x0106dd72
-#define QDSP_MODULE_VIDEOTASK               0x0106dd73
-#define QDSP_MODULE_VIDEO_AAC_VOC           0x0106dd74
-#define QDSP_MODULE_PCM_DEC                 0x0106dd75
-#define QDSP_MODULE_AUDIO_DEC_MP3           0x0106dd76
-#define QDSP_MODULE_AUDIO_DEC_AAC           0x0106dd77
-#define QDSP_MODULE_AUDIO_DEC_WMA           0x0106dd78
-#define QDSP_MODULE_HOSTPCM                 0x0106dd79
-#define QDSP_MODULE_DTMF                    0x0106dd7a
-#define QDSP_MODULE_AUDRECTASK              0x0106dd7b
-#define QDSP_MODULE_AUDPREPROCTASK          0x0106dd7c
-#define QDSP_MODULE_SBC_ENC                 0x0106dd7d
-#define QDSP_MODULE_VOC_UMTS                0x0106dd9a
-#define QDSP_MODULE_VOC_CDMA                0x0106dd98
-#define QDSP_MODULE_VOC_CDMA_WB             0x0106dd99
-#define QDSP_MODULE_VOC_UMTS_WB             0x0106dd9b
-#define QDSP_MODULE_VOC_PCM                 0x0106dd7f
-#define QDSP_MODULE_VOCENCTASK              0x0106dd80
-#define QDSP_MODULE_VOCDECTASK              0x0106dd81
-#define QDSP_MODULE_VOICEPROCTASK           0x0106dd82
-#define QDSP_MODULE_VIDEOENCTASK            0x0106dd83
-#define QDSP_MODULE_VFETASK                 0x0106dd84
-#define QDSP_MODULE_WAV_ENC                 0x0106dd85
-#define QDSP_MODULE_AACLC_ENC               0x0106dd86
-#define QDSP_MODULE_VIDEO_AMR               0x0106dd87
-#define QDSP_MODULE_VOC_AMR                 0x0106dd88
-#define QDSP_MODULE_VOC_EVRC                0x0106dd89
-#define QDSP_MODULE_VOC_13K                 0x0106dd8a
-#define QDSP_MODULE_VOC_FGV                 0x0106dd8b
-#define QDSP_MODULE_DIAGTASK                0x0106dd8c
-#define QDSP_MODULE_JPEGTASK                0x0106dd8d
-#define QDSP_MODULE_LPMTASK                 0x0106dd8e
-#define QDSP_MODULE_QCAMTASK                0x0106dd8f
-#define QDSP_MODULE_AUDIO_DEC_VOC           0x010855d4
-#define QDSP_MODULE_MODMATHTASK             0x0106dd90
-#define QDSP_MODULE_AUDPLAY2TASK            0x0106dd91
-#define QDSP_MODULE_AUDPLAY3TASK            0x0106dd92
-#define QDSP_MODULE_AUDPLAY4TASK            0x0106dd93
-#define QDSP_MODULE_GRAPHICSTASK            0x0106dd94
-#define QDSP_MODULE_MIDI                    0x0106dd95
-#define QDSP_MODULE_GAUDIO                  0x0106dd96
-#define QDSP_MODULE_VDEC_LP_MODE            0x0106dd97
-#define QDSP_MODULE_MAX                     0x7fffffff
-
-/* DO NOT USE: Force this enum to be a 32bit type to improve speed */
-#define	QDSP_MODULE_32BIT_DUMMY		0x10000
-
 
 /*
  * Constants used to communicate with the ADSP RTOS

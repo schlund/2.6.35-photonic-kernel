@@ -71,6 +71,9 @@ int smd_wait_until_opened(smd_channel_t *ch, int timeout_us);
 
 int smd_total_fifo_size(smd_channel_t *ch);
 
+void smem_semaphore_down(void* address, char marker);
+void smem_semaphore_up(void* address, char marker);
+
 typedef enum
 {
 	SMD_PORT_DS = 0,

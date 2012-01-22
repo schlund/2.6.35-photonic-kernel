@@ -61,6 +61,7 @@
 #include <mach/atmega_microp.h>
 /* #include <mach/msm_tssc.h> */
 #include <mach/htc_battery_wince.h>
+#include <mach/htc_acoustic_wince.h>
 #include "proc_comm_wince.h"
 #include <mach/htc_pwrsink.h>
 #include <mach/perflock.h>
@@ -395,6 +396,42 @@ static struct pwr_sink photon_pwrsink_table[] = {
 	},
 };
 
+/****** PHOTON AUDIO ******/
+
+#define SND(num, desc) { .name = desc, .id = num }
+static struct snd_endpoint snd_endpoints_list[] = {
+	SND(0, "HANDSET"),
+	SND(1, "SPEAKER"),
+	SND(2, "HEADSET"),
+	SND(2, "NO_MIC_HEADSET"),
+	SND(3, "BT"),
+	SND(3, "BT_EC_OFF"),
+	SND(13, "SPEAKER_MIC"),
+	SND(0x11, "IDLE"),
+	SND(256, "CURRENT"),
+};
+#undef SND
+
+static struct msm_snd_endpoints photon_snd_endpoints = {
+	.endpoints = snd_endpoints_list,
+	.num = ARRAY_SIZE(snd_endpoints_list),
+};
+
+static struct platform_device photon_snd = {
+	.name = "msm_snd",
+	.id = -1,
+	.dev  = {
+		.platform_data = &photon_snd_endpoints,
+	},
+};
+
+extern void photon_headset_amp(int enabled);
+static struct htc_acoustic_wce_board_data htcphoton_acoustic_data = {
+	.set_headset_amp = photon_headset_amp,
+};
+
+/****** PHOTON AUDIO END ******/
+
 static int photon_pwrsink_resume_early(struct platform_device *pdev)
 {
 	htc_pwrsink_set(PWRSINK_SYSTEM_LOAD, 7);
@@ -662,6 +699,8 @@ static struct platform_device *devices[] __initdata = {
         &bcm_bt_lpm_device,
 #endif
 	&msm_device_htc_battery_wince,
+	&photon_snd,
+	&acoustic_device,
 	&msm_camera_sensor_s5k4e1gx,
 	&photon_rfkill,
 #ifdef CONFIG_HTC_PWRSINK
@@ -921,6 +960,7 @@ static void __init photon_init(void)
 				MSM_GPIO_TO_INT(PHOTON_GPIO_UART3_RX));
 #endif
 
+	htc_acoustic_wce_board_data = &htcphoton_acoustic_data;
 	msm_add_devices();
 
 #ifdef CONFIG_SERIAL_MSM_HS
