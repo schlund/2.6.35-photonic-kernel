@@ -680,7 +680,7 @@ MODULE_PARM_DESC(bdaddr, "bluetooth address");
 
 #elif defined(CONFIG_SERIAL_MSM_HS)
 static struct msm_serial_hs_platform_data msm_uart_dm1_pdata = {
-	.wakeup_irq = MSM_GPIO_TO_INT(PHOTON_GPIO_BT_HOST_WAKE),
+	.rx_wakeup_irq = MSM_GPIO_TO_INT(PHOTON_GPIO_BT_HOST_WAKE),
 	.inject_rx_on_wakeup = 0,
 	.cpu_lock_supported = 1,
 
