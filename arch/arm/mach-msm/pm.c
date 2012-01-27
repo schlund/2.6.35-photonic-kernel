@@ -285,7 +285,11 @@ msm_pm_wait_state(uint32_t wait_all_set, uint32_t wait_all_clear,
  * During booting up, disable entering arch_idle() by disable_hlt()
  * Enable it after booting up BOOT_LOCK_TIMEOUT sec.
  */
+#ifdef CONFIG_PHOTON_IS_NAND_BOOT
 #define BOOT_LOCK_TIMEOUT_NORMAL      (60 * HZ)
+#else
+#define BOOT_LOCK_TIMEOUT_NORMAL      (300 * HZ)
+#endif
 #define BOOT_LOCK_TIMEOUT_SHORT      (10 * HZ)
 static void do_expire_boot_lock(struct work_struct *work)
 {
