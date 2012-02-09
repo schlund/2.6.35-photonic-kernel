@@ -174,7 +174,7 @@ static struct msm_mdp_platform_data photon_mdp_pdata = {
 };
 
 static struct msm_mddi_platform_data photon_pdata = {
-	.clk_rate = 106000000,
+	.clk_rate = 122880000,
 	.power_client = photon_mddi_eid_power,
 	.fixup = panel_eid_fixup,
 	.fb_resource = resources_msm_fb,
