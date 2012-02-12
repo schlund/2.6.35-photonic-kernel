@@ -195,7 +195,7 @@ CROSS_COMPILE	?= $(CONFIG_CROSS_COMPILE:"%"=%)
 
 # Schlund: change this path to your tools location
 ARCH=arm
-CROSS_COMPILE=/home/schlund/android/arm-2010.09/bin/arm-none-linux-gnueabi-
+CROSS_COMPILE=../prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi-
 
 # Architecture as present in compile.h
 UTS_MACHINE 	:= $(ARCH)
