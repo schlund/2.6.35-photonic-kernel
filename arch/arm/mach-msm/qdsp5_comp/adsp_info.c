@@ -23,16 +23,10 @@ typedef enum {
    QDSP_MODULE_AFETASK,
    QDSP_MODULE_AUDPLAY0TASK,
    QDSP_MODULE_AUDPLAY1TASK,
-   QDSP_MODULE_AUDPLAY2TASK,
-   QDSP_MODULE_AUDPLAY3TASK,
-   QDSP_MODULE_AUDPLAY4TASK,
    QDSP_MODULE_AUDPPTASK,
-   QDSP_MODULE_MIDI,
    QDSP_MODULE_VIDEOTASK,
    QDSP_MODULE_VIDEO_AAC_VOC,
-   QDSP_MODULE_VIDEO_AAC_VOC_TURBO,
    QDSP_MODULE_PCM_DEC,
-   QDSP_MODULE_GAUDIO,
    QDSP_MODULE_AUDIO_DEC_MP3,
    QDSP_MODULE_AUDIO_DEC_AAC,
    QDSP_MODULE_AUDIO_DEC_WMA,
@@ -41,9 +35,9 @@ typedef enum {
    QDSP_MODULE_AUDRECTASK,
    QDSP_MODULE_AUDPREPROCTASK,
    QDSP_MODULE_SBC_ENC,
+   QDSP_MODULE_VOC_UMTS,
    QDSP_MODULE_VOC_CDMA,
    QDSP_MODULE_VOC_CDMA_WB,
-   QDSP_MODULE_VOC_UMTS,
    QDSP_MODULE_VOC_UMTS_WB,
    QDSP_MODULE_VOC_PCM,
    QDSP_MODULE_VOCENCTASK,
@@ -54,21 +48,23 @@ typedef enum {
    QDSP_MODULE_WAV_ENC,
    QDSP_MODULE_AACLC_ENC,
    QDSP_MODULE_VIDEO_AMR,
-   QDSP_MODULE_VIDEO_AMR_TURBO,
    QDSP_MODULE_VOC_AMR,
    QDSP_MODULE_VOC_EVRC,
    QDSP_MODULE_VOC_13K,
    QDSP_MODULE_VOC_FGV,
-   QDSP_MODULE_VOC_FR,
    QDSP_MODULE_DIAGTASK,
    QDSP_MODULE_JPEGTASK,
+   QDSP_MODULE_LPMTASK,
    QDSP_MODULE_QCAMTASK,
-   QDSP_MODULE_MODMATHTASK,
-   QDSP_MODULE_AUDIO_DEC_AAC_BSAC,
-   QDSP_MODULE_WM_LP_MODE,
-   QDSP_MODULE_WM_TURBO_MODE,
+   QDSP_MODULE_AUDIO_DEC_VOC,
+   QDSP_MODULE_MODMATHTASK,  
+   QDSP_MODULE_AUDPLAY2TASK,
+   QDSP_MODULE_AUDPLAY3TASK,
+   QDSP_MODULE_AUDPLAY4TASK,
+   QDSP_MODULE_GRAPHICSTASK,
+   QDSP_MODULE_MIDI,
+   QDSP_MODULE_GAUDIO,
    QDSP_MODULE_VDEC_LP_MODE,
-   QDSP_MODULE_VDEC_LP_MODE_TURBO,
    QDSP_MODULE_MAX,
 } qdsp_module_type;
 
@@ -120,6 +116,8 @@ static uint32_t qdsp_hadron_queue_offset_table[] =
 {
   0x100,               /* QDSP_mpuAfeQueue                  */
   0xfc,                /* QDSP_mpuRmtQueue                  */
+  QDSP_RTOS_NO_QUEUE,  /* QDSP_null            		    */
+  QDSP_RTOS_NO_QUEUE,  /* QDSP_mnulll            	    */
   0x130,               /* QDSP_mpuVDecCmdQueue              */
   0x134,               /* QDSP_mpuVDecPktQueue              */
   0x12c,               /* QDSP_mpuVEncCmdQueue              */
@@ -138,8 +136,6 @@ static uint32_t qdsp_hadron_queue_offset_table[] =
   0x14c,               /* QDSP_uPAudRecBitStreamQueue       */
   0x148,               /* QDSP_uPAudRecCmdQueue             */
   0x11c,               /* QDSP_uPDiagQueue                  */
-  0x118,               /* QDSP_uPJpegFTMActionCmdQueue      */
-  0x114,               /* QDSP_uPJpegFTMCfgCmdQueue         */
   0x168,               /* QDSP_uPJpegActionCmdQueue         */
   0x164,               /* QDSP_uPJpegCfgCmdQueue            */
   0x104,               /* QDSP_uPVocProcQueue               */
@@ -148,7 +144,9 @@ static uint32_t qdsp_hadron_queue_offset_table[] =
   0x124,               /* QDSP_vfeCommandTableQueue         */
   0xf0,                /* QDSP_vfeFTMCommandQueue           */
   0xf8,                /* QDSP_vfeFTMCommandScaleQueue      */
-  0xf4                 /* QDSP_vfeFTMCommandTableQueue      */
+  0xf4,                 /* QDSP_vfeFTMCommandTableQueue      */
+  0x118,               /* QDSP_uPJpegFTMActionCmdQueue      */
+  0x114               /* QDSP_uPJpegFTMCfgCmdQueue         */
 };
 
 /* Tables to convert tasks to modules */
@@ -194,7 +192,7 @@ int adsp_init_info(struct adsp_info *info)
 	info->max_msg16_size = 193;
 	info->max_msg32_size = 9;
 
-	info->max_task_id = 30;
+	info->max_task_id = QDSP_RTOS_MAX_TASK_ID;
 	info->max_module_id = QDSP_MODULE_MAX - 1;
 	info->max_queue_id = QDSP_MAX_NUM_QUEUES;
 	info->max_image_id = 2;
