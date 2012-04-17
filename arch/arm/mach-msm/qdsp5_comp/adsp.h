@@ -286,7 +286,7 @@ extern void msm_adsp_publish_cdevs(struct msm_adsp_module *, unsigned);
 extern int adsp_init_info(struct adsp_info *info);
 
 /* Value to indicate that a queue is not defined for a particular image */
-#define QDSP_RTOS_NO_QUEUE  0xfffffffe
+#define QDSP_RTOS_NO_QUEUE  0xffffffff // WTF? In radio module we use another offset!
 
 /*
  * Constants used to communicate with the ADSP RTOS
