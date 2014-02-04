@@ -17,14 +17,14 @@
 #include <mach/board.h>
 
 #define MSM_MEM1_BASE		0x00000000
-#define MSM_MEM1_SIZE		0x0CC00000
+#define MSM_MEM1_SIZE		0x0CC00000//204
 
 #define MSM_MEM2_BASE		0x20000000
-#define MSM_MEM2_SIZE		0x08000000
+#define MSM_MEM2_SIZE		0x09F00000 // we have 384mb , so we must enable 304 mb and 80 for heap+ linux base offset
 
 #define MSM_LINUX_BASE_OFFSET	0x00200000
 
-#define MSM_MM_HEAP_SIZE        0x02A00000
+#define MSM_MM_HEAP_SIZE        0x03000000 //grow to 48mb
 
 #define MSM_PHOTON_LINUX1_BASE          (MSM_MEM1_BASE + MSM_LINUX_BASE_OFFSET)
 #define MSM_PHOTON_LINUX1_SIZE          (MSM_MEM1_SIZE - MSM_LINUX_BASE_OFFSET)
