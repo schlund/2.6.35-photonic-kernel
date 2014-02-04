@@ -601,7 +601,7 @@ static struct platform_device capella_cm3602 = {
 };
 /* End Proximity Sensor (Capella_CM3602)*/
 
-#define LIB_MICROP_VER	0x02
+#define LIB_MICROP_VER	0x02//may be we should use 0x05 like defined in spl?
 
 static struct msm_i2c_device_platform_data msm_i2c_pdata = {
 	.i2c_clock = 400000,
