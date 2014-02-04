@@ -61,26 +61,26 @@ int msm_adsp_write(struct msm_adsp_module *module,
 
 #define QDSP_mpuAfeQueue                  0
 #define QDSP_mpuRmtQueue                  1
-#define QDSP_mpuVDecCmdQueue              2
-#define QDSP_mpuVDecPktQueue              3
-#define QDSP_mpuVEncCmdQueue              4
-#define QDSP_rxMpuDecCmdQueue             5
-#define QDSP_rxMpuDecPktQueue             6
-#define QDSP_txMpuEncQueue                7
-#define QDSP_uPAudPPCmd1Queue             8
-#define QDSP_uPAudPPCmd2Queue             9
-#define QDSP_uPAudPPCmd3Queue             10
-#define QDSP_uPAudPlay0BitStreamCtrlQueue 11
-#define QDSP_uPAudPlay1BitStreamCtrlQueue 12
-#define QDSP_uPAudPlay2BitStreamCtrlQueue 13
-#define QDSP_uPAudPlay3BitStreamCtrlQueue 14
-#define QDSP_uPAudPlay4BitStreamCtrlQueue 15
-#define QDSP_uPAudPreProcCmdQueue         16
-#define QDSP_uPAudRecBitStreamQueue       17
-#define QDSP_uPAudRecCmdQueue             18
-#define QDSP_uPDiagQueue                  19
-#define QDSP_uPJpegFTMActionCmdQueue      20
-#define QDSP_uPJpegFTMCfgCmdQueue         21
+#define QDSP_null              		  2
+#define QDSP_mnull                        3
+#define QDSP_mpuVDecCmdQueue              4
+#define QDSP_mpuVDecPktQueue              5
+#define QDSP_mpuVEncCmdQueue              6
+#define QDSP_rxMpuDecCmdQueue             7
+#define QDSP_rxMpuDecPktQueue             8
+#define QDSP_txMpuEncQueue                9
+#define QDSP_uPAudPPCmd1Queue             10
+#define QDSP_uPAudPPCmd2Queue             11
+#define QDSP_uPAudPPCmd3Queue             12
+#define QDSP_uPAudPlay0BitStreamCtrlQueue 13
+#define QDSP_uPAudPlay1BitStreamCtrlQueue 14
+#define QDSP_uPAudPlay2BitStreamCtrlQueue 15
+#define QDSP_uPAudPlay3BitStreamCtrlQueue 16
+#define QDSP_uPAudPlay4BitStreamCtrlQueue 17
+#define QDSP_uPAudPreProcCmdQueue         18
+#define QDSP_uPAudRecBitStreamQueue       19
+#define QDSP_uPAudRecCmdQueue             20
+#define QDSP_uPDiagQueue                  21
 #define QDSP_uPJpegActionCmdQueue         22
 #define QDSP_uPJpegCfgCmdQueue            23
 #define QDSP_uPVocProcQueue               24
@@ -90,7 +90,10 @@ int msm_adsp_write(struct msm_adsp_module *module,
 #define QDSP_vfeFTMCommandQueue           28
 #define QDSP_vfeFTMCommandScaleQueue      29
 #define QDSP_vfeFTMCommandTableQueue      30
+#define QDSP_uPJpegFTMActionCmdQueue      31
+#define QDSP_uPJpegFTMCfgCmdQueue         32
 
-#define QDSP_MAX_NUM_QUEUES               31
+#define QDSP_MAX_NUM_QUEUES               33
+
 
 #endif
